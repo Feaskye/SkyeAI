@@ -1,2 +1,5 @@
 # SkyeAI
-AI学习入门
+AI
+NLP
+CV
+推荐系统
