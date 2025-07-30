@@ -241,6 +241,46 @@ spec:
 - **K8s部署超时**：验证集群资源是否充足
 - **Jenkins权限问题**：确保Jenkins用户有Docker和K8s操作权限
 
+## Service Mesh支持
+### Istio部署指南
+#### 前提条件
+- Istio 1.16+已安装到Kubernetes集群
+```bash
+istioctl install --set profile=demo -y
+kubectl label namespace midemo istio-injection=enabled
+```
+
+#### 应用Istio配置
+```bash
+kubectl apply -f k8s/istio/virtual-service.yaml -f k8s/istio/destination-rule.yaml
+```
+
+#### 流量管理功能
+- 基于权重的灰度发布
+- 请求超时和重试策略
+- 流量镜像和故障注入
+
+### Linkerd部署指南
+#### 前提条件
+- Linkerd 2.13+已安装到Kubernetes集群
+```bash
+linkerd install --crds | kubectl apply -f -
+linkerd install | kubectl apply -f -
+linkerd check
+```
+
+#### 应用Linkerd配置
+```bash
+kubectl apply -f k8s/linkerd/service-profile.yaml
+```
+
+### 架构说明
+项目提供两种Service Mesh方案：
+- **Istio**：全功能服务网格，适合复杂流量管理场景
+- **Linkerd**：轻量级服务网格，注重性能和简单性
+
+可通过修改k8s目录下对应配置选择不同方案，默认使用Istio配置
+
 ## 注意事项
 - API密钥安全：请勿将包含密钥的配置文件提交到版本控制系统
 - 新闻API限制：部分免费API有调用频率限制，可能影响分析结果

@@ -11,8 +11,11 @@ spec:
       app: midemo
   template:
     metadata:
-      labels:
-        app: midemo
+        annotations:
+          sidecar.istio.io/inject: "true"
+        labels:
+          app: midemo
+          version: v1
     spec:
       containers:
       - name: midemo
