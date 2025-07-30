@@ -1,0 +1,32 @@
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: midemo-service.midemo.svc.cluster.local
+  namespace: midemo
+spec:
+  routes:
+  - name: default
+    condition:
+      path:
+        match: PathPrefix
+        value: /
+    responseClasses:
+    - condition:
+        status:
+          min: 200
+          max: 299
+      isFailure: false
+    timeout: 5s
+    retries:
+      backoff:
+        kind: exponential
+        baseMs: 10
+        maxMs: 1000
+        exponent: 2
+      count: 3
+  - name: api
+    condition:
+      path:
+        match: PathPrefix
+        value: /api
+    timeout: 10s

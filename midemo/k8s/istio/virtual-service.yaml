@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: midemo-vs
+  namespace: midemo
+spec:
+  hosts:
+  - midemo-service
+  http:
+  - route:
+    - destination:
+        host: midemo-service
+        subset: v1
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+    timeout: 5s
+  - match:
+    - headers:
+        user-agent:
+          regex: ".*Chrome.*"
+    route:
+    - destination:
+        host: midemo-service
+        subset: v2
