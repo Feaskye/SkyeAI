@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_REGISTRY = 'docker.io/yourusername'
+        APP_NAME = 'midemo'
+        K8S_NAMESPACE = 'default'
+    }
+    stages {
+        stage('代码检出') {
+            steps {
+                git url: 'https://github.com/yourusername/SkyeAI.git', branch: 'main'
+            }
+        }
+        stage('编译构建') {
+            steps {
+                dir('midemo') {
+                    sh './mvnw clean package -DskipTests'
+                }
+            }
+        }
+        stage('单元测试') {
+            steps {
+                dir('midemo') {
+                    sh './mvnw test'
+                }
+            }
+            post {
+                always {
+                    junit 'midemo/target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('构建Docker镜像') {
+            steps {
+                dir('midemo') {
+                    sh "docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${BUILD_NUMBER} ."
+                }
+            }
+        }
+        stage('推送Docker镜像') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-registry-token', variable: 'DOCKER_TOKEN')]) {
+                    sh "docker login -u yourusername -p ${DOCKER_TOKEN} ${DOCKER_REGISTRY}"
+                    sh "docker push ${DOCKER_REGISTRY}/${APP_NAME}:${BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('部署到K8s') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    dir('midemo/k8s') {
+                        sh "sed -i 's|${DOCKER_REGISTRY}/midemo:${BUILD_NUMBER}|${DOCKER_REGISTRY}/${APP_NAME}:${BUILD_NUMBER}|g' deployment.yaml"
+                        sh "kubectl apply -f deployment.yaml --namespace ${K8S_NAMESPACE}"
+                        sh "kubectl rollout status deployment/${APP_NAME}-deployment --namespace ${K8S_NAMESPACE}"
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            slackSend channel: '#dev-team', message: '✅ 构建部署成功: Job ${JOB_NAME} #${BUILD_NUMBER} (${DOCKER_REGISTRY}/${APP_NAME}:${BUILD_NUMBER})'
+        }
+        failure {
+            slackSend channel: '#dev-team', message: '❌ 构建部署失败: Job ${JOB_NAME} #${BUILD_NUMBER}'
+        }
+    }
+}
