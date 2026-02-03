@@ -1,0 +1,27 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: jarvis-frontend
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        import-check:
+          enabled: false
+    compatibility-verifier:
+      enabled: false
+
+# WebSocket配置
+websocket:
+  endpoint: /ws/chat
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.skyeai.jarvis.frontend: debug

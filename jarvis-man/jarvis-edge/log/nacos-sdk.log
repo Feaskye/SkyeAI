@@ -1,0 +1,53 @@
+2026-01-28T14:09:52.777+0800	INFO	naming_http/push_receiver.go:89	udp server start, port: 55715
+2026-01-28T14:09:52.800+0800	INFO	rpc/rpc_client.go:157	init rpc client for name %!(EXTRA string=2fcf8105-479f-4228-8f5a-f36481586f41)
+2026-01-28T14:09:52.800+0800	INFO	rpc/rpc_client.go:166	get app conn labels from client config map[] 
+2026-01-28T14:09:52.800+0800	INFO	rpc/rpc_client.go:168	get app conn labels from env map[] 
+2026-01-28T14:09:52.800+0800	INFO	rpc/rpc_client.go:171	final app conn labels : map[] 
+2026-01-28T14:09:52.800+0800	INFO	rpc/rpc_client.go:327	[RpcClient.Start] 2fcf8105-479f-4228-8f5a-f36481586f41 try to connect to server on start up, server: {serverIp:localhost serverPort:8848 serverGrpcPort:9848}
+2026-01-28T14:09:52.800+0800	INFO	rpc/grpc_client.go:175	check tls config %!(EXTRA *constant.TLSConfig=&{false false false    })
+2026-01-28T14:09:52.800+0800	INFO	rpc/grpc_client.go:180	try to get tls config from env
+2026-01-28T14:09:52.800+0800	INFO	rpc/grpc_client.go:189	 tls config from env is not enable
+2026-01-28T14:09:52.819+0800	INFO	util/common.go:96	Local IP:192.168.110.28
+2026-01-28T14:09:52.985+0800	INFO	rpc/rpc_client.go:337	2fcf8105-479f-4228-8f5a-f36481586f41 success to connect to server {serverIp:localhost serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1769580592870_172.17.0.1_52262
+2026-01-28T14:09:52.985+0800	INFO	naming_http/naming_http_proxy.go:63	register instance namespaceId:<public>,serviceName:<jarvis-edge> with instance:<{"instanceId":"","ip":"127.0.0.1","port":9091,"weight":10,"healthy":true,"enabled":true,"ephemeral":false,"clusterName":"DEFAULT","serviceName":"","metadata":{},"instanceHeartBeatInterval":0,"ipDeleteTimeout":0,"instanceHeartBeatTimeOut":0}>
+2026-01-28T14:09:52.987+0800	INFO	rpc/rpc_client.go:487	2fcf8105-479f-4228-8f5a-f36481586f41 notify connected event to listeners , connectionId=1769580592870_172.17.0.1_52262
+2026-01-28T14:18:04.748+0800	INFO	naming_http/naming_http_proxy.go:106	deregister instance namespaceId:<public>,serviceName:<DEFAULT_GROUP@@jarvis-edge> with instance:<127.0.0.1:9091@>
+2026-01-28T14:18:04.748+0800	INFO	naming_http/beat_reactor.go:89	remove beat: DEFAULT_GROUP@@jarvis-edge@127.0.0.1:9091 from beat map
+2026-01-28T14:18:04.781+0800	INFO	naming_grpc/naming_grpc_proxy.go:202	Close Nacos Go SDK Client...
+2026-01-28T14:18:04.781+0800	ERROR	rpc/grpc_client.go:280	connectionId 1769580592870_172.17.0.1_52262 received error event, isRunning:false, isAbandon=false, error=rpc error: code = Canceled desc = grpc: the client connection is closing
+2026-01-28T14:18:04.781+0800	INFO	rpc/rpc_client.go:487	2fcf8105-479f-4228-8f5a-f36481586f41 notify disconnected event to listeners , connectionId=1769580592870_172.17.0.1_52262
+2026-01-28T14:57:57.727+0800	INFO	naming_http/push_receiver.go:89	udp server start, port: 55386
+2026-01-28T14:57:57.762+0800	INFO	rpc/rpc_client.go:157	init rpc client for name %!(EXTRA string=50122610-9e23-48f1-9f81-5c409b84065f)
+2026-01-28T14:57:57.762+0800	INFO	rpc/rpc_client.go:166	get app conn labels from client config map[] 
+2026-01-28T14:57:57.762+0800	INFO	rpc/rpc_client.go:168	get app conn labels from env map[] 
+2026-01-28T14:57:57.763+0800	INFO	rpc/rpc_client.go:171	final app conn labels : map[] 
+2026-01-28T14:57:57.763+0800	INFO	rpc/rpc_client.go:327	[RpcClient.Start] 50122610-9e23-48f1-9f81-5c409b84065f try to connect to server on start up, server: {serverIp:localhost serverPort:8848 serverGrpcPort:9848}
+2026-01-28T14:57:57.763+0800	INFO	rpc/grpc_client.go:175	check tls config %!(EXTRA *constant.TLSConfig=&{false false false    })
+2026-01-28T14:57:57.763+0800	INFO	rpc/grpc_client.go:180	try to get tls config from env
+2026-01-28T14:57:57.763+0800	INFO	rpc/grpc_client.go:189	 tls config from env is not enable
+2026-01-28T14:57:57.783+0800	INFO	util/common.go:96	Local IP:192.168.110.28
+2026-01-28T14:57:57.895+0800	INFO	rpc/rpc_client.go:337	50122610-9e23-48f1-9f81-5c409b84065f success to connect to server {serverIp:localhost serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1769583477794_172.17.0.1_45612
+2026-01-28T14:57:57.895+0800	INFO	naming_http/naming_http_proxy.go:63	register instance namespaceId:<public>,serviceName:<jarvis-edge> with instance:<{"instanceId":"","ip":"127.0.0.1","port":9091,"weight":10,"healthy":true,"enabled":true,"ephemeral":false,"clusterName":"DEFAULT","serviceName":"","metadata":{},"instanceHeartBeatInterval":0,"ipDeleteTimeout":0,"instanceHeartBeatTimeOut":0}>
+2026-01-29T09:00:48.063+0800	ERROR	rpc/rpc_client.go:526	client sendHealthCheck failed,err=rpc error: code = DeadlineExceeded desc = context deadline exceeded
+2026-01-29T09:00:48.065+0800	INFO	rpc/rpc_client.go:512	50122610-9e23-48f1-9f81-5c409b84065f server healthy check fail, currentConnection=1769583477794_172.17.0.1_45612
+2026-01-29T09:00:48.065+0800	INFO	rpc/rpc_client.go:427	50122610-9e23-48f1-9f81-5c409b84065f try to re connect to a new server, server is not appointed, will choose a random server.
+2026-01-29T09:00:48.065+0800	INFO	rpc/grpc_client.go:175	check tls config %!(EXTRA *constant.TLSConfig=&{false false false    })
+2026-01-29T09:00:48.065+0800	INFO	rpc/grpc_client.go:180	try to get tls config from env
+2026-01-29T09:00:48.065+0800	INFO	rpc/grpc_client.go:189	 tls config from env is not enable
+2026-01-29T09:00:51.858+0800	INFO	rpc/grpc_client.go:175	check tls config %!(EXTRA *constant.TLSConfig=&{false false false    })
+2026-01-29T09:00:52.847+0800	INFO	rpc/grpc_client.go:180	try to get tls config from env
+2026-01-29T09:00:52.847+0800	INFO	rpc/grpc_client.go:189	 tls config from env is not enable
+2026-01-29T09:00:55.863+0800	WARN	rpc/rpc_client.go:458	50122610-9e23-48f1-9f81-5c409b84065f fail to connect server, after trying 1 times, last try server is {serverIp:localhost serverPort:8848 serverGrpcPort:9848}, error=server check request failed , err:rpc error: code = DeadlineExceeded desc = received context error while waiting for new LB policy update: context deadline exceeded
+2026-01-29T09:00:55.994+0800	INFO	rpc/grpc_client.go:175	check tls config %!(EXTRA *constant.TLSConfig=&{false false false    })
+2026-01-29T09:00:55.995+0800	INFO	rpc/grpc_client.go:180	try to get tls config from env
+2026-01-29T09:00:55.995+0800	INFO	rpc/grpc_client.go:189	 tls config from env is not enable
+2026-01-29T09:00:58.793+0800	INFO	rpc/rpc_client.go:440	50122610-9e23-48f1-9f81-5c409b84065f success to connect a server {serverIp:localhost serverPort:8848 serverGrpcPort:9848}, connectionId=1769648458366_172.17.0.1_51162
+2026-01-29T09:00:58.793+0800	INFO	rpc/rpc_client.go:444	50122610-9e23-48f1-9f81-5c409b84065f abandon prev connection, server is {serverIp:localhost serverPort:8848 serverGrpcPort:9848}, connectionId is 1769583477794_172.17.0.1_45612
+2026-01-29T09:00:58.814+0800	INFO	rpc/rpc_client.go:487	50122610-9e23-48f1-9f81-5c409b84065f notify disconnected event to listeners , connectionId=1769648458366_172.17.0.1_51162
+2026-01-29T09:00:58.814+0800	INFO	rpc/rpc_client.go:487	50122610-9e23-48f1-9f81-5c409b84065f notify connected event to listeners , connectionId=1769648458366_172.17.0.1_51162
+2026-01-29T09:00:58.847+0800	ERROR	rpc/grpc_client.go:280	connectionId 1769583477794_172.17.0.1_45612 received error event, isRunning:true, isAbandon=true, error=rpc error: code = Canceled desc = grpc: the client connection is closing
+2026-01-29T10:59:58.279+0800	INFO	naming_http/naming_http_proxy.go:106	deregister instance namespaceId:<public>,serviceName:<DEFAULT_GROUP@@jarvis-edge> with instance:<127.0.0.1:9091@>
+2026-01-29T10:59:58.279+0800	INFO	naming_http/beat_reactor.go:89	remove beat: DEFAULT_GROUP@@jarvis-edge@127.0.0.1:9091 from beat map
+2026-01-29T10:59:58.653+0800	INFO	naming_grpc/naming_grpc_proxy.go:202	Close Nacos Go SDK Client...
+2026-01-29T10:59:58.654+0800	INFO	rpc/rpc_client.go:487	50122610-9e23-48f1-9f81-5c409b84065f notify disconnected event to listeners , connectionId=1769648458366_172.17.0.1_51162
+2026-01-29T10:59:58.654+0800	ERROR	rpc/grpc_client.go:280	connectionId 1769648458366_172.17.0.1_51162 received error event, isRunning:false, isAbandon=false, error=rpc error: code = Canceled desc = grpc: the client connection is closing

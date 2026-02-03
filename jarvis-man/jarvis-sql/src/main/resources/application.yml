@@ -1,0 +1,167 @@
+server:
+  port: 8085
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 2048
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 20
+    connection-timeout: 30000
+
+spring:
+  application:
+    name: jarvis-sql
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+      config:
+        server-addr: localhost:8848
+        namespace: public
+        file-extension: yml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/jarvis
+    username: postgres
+    password: password
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      auto-commit: false
+  threads:
+    virtual:
+      enabled: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=300s
+
+# HTTP客户端配置
+spring.http.client:
+  connection-timeout: 10000
+  read-timeout: 30000
+
+# 缓存配置
+spring.cache:
+  caffeine:
+    spec: maximumSize=500,expireAfterWrite=600s
+
+# 线程池配置
+spring.task:
+  scheduling:
+    pool:
+      size: 10
+  execution:
+    pool:
+      core-size: 10
+      max-size: 50
+      queue-capacity: 1000
+      keep-alive: 60s
+
+# gRPC配置
+grpc:
+  server:
+    port: 9095
+    max-inbound-message-size: 4194304
+    max-inbound-metadata-size: 8192
+  client:
+    jarvis-data:
+      address: static://localhost:9091
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+      keepAliveTime: 60s
+      keepAliveTimeout: 20s
+
+# Text-to-SQL配置
+text-to-sql:
+  timeout: 30000
+  max-retries: 3
+  supported-databases:
+    - postgresql
+    - mysql
+    - sqlite
+  optimization:
+    enable-query-cache: true
+    query-cache-size: 1000
+    enable-batch-processing: true
+
+# Function Call增强配置
+function-call:
+  max-params: 10
+  max-parameter-length: 1000
+  enable-auto-discovery: true
+  enable-validation: true
+  validation-timeout: 5000
+
+# 工具定义配置
+tools:
+  discovery:
+    enabled: true
+    scan-packages:
+      - com.skyeai.jarvis.sql.tool
+      - com.skyeai.jarvis.tool
+    scan-interval: 60000
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.skyeai.jarvis.sql: debug
+    org.springframework.cloud: warn
+    org.springframework.web: warn
+    io.grpc: warn
+    org.springframework.jdbc: warn
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/jarvis-sql.log
+    max-size: 10MB
+    max-history: 7
+
+# 性能优化配置
+performance:
+  enable-batching: true
+  batch-size: 10
+  enable-async-processing: true
+  async-timeout: 30000
+
+# 安全配置
+security:
+  cors:
+    enabled: true
+    allowed-origins: "*"
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+  rate-limiting:
+    enabled: true
+    max-requests: 100
+    time-window: 60s

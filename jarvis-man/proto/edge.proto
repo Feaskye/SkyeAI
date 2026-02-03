@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package com.skyeai.jarvis.edge;
+
+option java_multiple_files = true;
+option java_package = "com.skyeai.jarvis.edge";
+option java_outer_classname = "EdgeProto";
+
+// EdgeService 定义边缘代理服务
+// 未来扩展为音频/硬件模块的基础接口
+service EdgeService {
+  // 健康检查
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+  // 状态查询
+  rpc GetStatus(StatusRequest) returns (StatusResponse);
+  // 预留接口：未来用于音频流处理
+  rpc StreamAudio(stream AudioChunk) returns (stream AudioResponse);
+}
+
+// 健康检查请求
+message HealthCheckRequest {
+  string service = 1;
+}
+
+// 健康检查响应
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}
+
+// 状态查询请求
+message StatusRequest {
+  string component = 1;
+}
+
+// 状态查询响应
+message StatusResponse {
+  string component = 1;
+  string status = 2;
+  string version = 3;
+  map<string, string> metrics = 4;
+}
+
+// 音频数据块（预留接口）
+message AudioChunk {
+  bytes data = 1;
+  int64 timestamp = 2;
+}
+
+// 音频响应（预留接口）
+message AudioResponse {
+  bytes data = 1;
+  bool is_final = 2;
+}

@@ -1,0 +1,94 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: jarvis-cognition
+  config:
+    import: nacos:jarvis-cognition
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+
+# 认知服务配置
+cognition:
+  # ReAct决策配置
+  react:
+    enabled: true
+    max_steps: 5
+    timeout_seconds: 300
+    temperature: 0.7
+    model: gpt-4-turbo
+  
+  # 多模态处理配置
+  multimodal:
+    enabled: true
+    image_processing:
+      enabled: true
+      max_image_size: 10485760
+    speech_processing:
+      enabled: true
+      sample_rate: 16000
+      channels: 1
+    video_processing:
+      enabled: false
+      max_video_duration: 60
+    # 阿里视觉模型配置
+    aliyun:
+      vision:
+        enabled: false
+        api_key: ""
+        api_url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+        model: "qwen-image-plus"
+      speech:
+        enabled: false
+        api_key: ""
+        api_url: "https://ark.cn-beijing.volces.com/api/v3/audio/transcriptions"
+        model: "qwen3-asr-flash-filetrans"
+    # jarvis-edge配置
+    edge:
+      enabled: true
+      api_url: "http://jarvis-edge:8081"
+    # 全模态模型配置
+    full_modal:
+      enabled: false
+      api_key: ""
+      api_url: ""
+      model: ""
+  
+  # 自然语言增强配置
+  nlp:
+    enabled: true
+    sentiment_analysis:
+      enabled: true
+    entity_recognition:
+      enabled: true
+    summarization:
+      enabled: true
+    translation:
+      enabled: true
+  
+  # 知识图谱配置
+  knowledge_graph:
+    enabled: false
+    endpoint: http://localhost:7474
+    username: neo4j
+    password: password
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.skyeai.jarvis.cognition: debug
+
+# LLM配置
+llm:
+  openai:
+    api-key: ""
+    base-url: "https://api.openai.com/v1"

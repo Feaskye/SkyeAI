@@ -1,0 +1,247 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/skyeai/jarvis-edge/pkg/api";
+
+// 边缘服务定义
+service EdgeService {
+  // 健康检查
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
+  
+  // 获取服务状态
+  rpc GetStatus(StatusRequest) returns (StatusResponse) {};
+  
+  // 音频流处理（双向流）
+  rpc StreamAudio(stream AudioRequest) returns (stream AudioResponse) {};
+  
+  // 芯片检测
+  rpc DetectHardware(DetectHardwareRequest) returns (DetectHardwareResponse) {};
+  
+  // 模型优化
+  rpc OptimizeModel(OptimizeModelRequest) returns (OptimizeModelResponse) {};
+  
+  // 获取优化模型
+  rpc GetOptimizedModel(GetOptimizedModelRequest) returns (GetOptimizedModelResponse) {};
+  
+  // 运行推理
+  rpc RunInference(RunInferenceRequest) returns (RunInferenceResponse) {};
+}
+
+// 健康检查请求
+message HealthCheckRequest {
+  string service = 1;
+}
+
+// 健康检查响应
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+  string service = 2;
+  string version = 3;
+}
+
+// 状态查询请求
+message StatusRequest {
+  string component = 1;
+}
+
+// 状态查询响应
+message StatusResponse {
+  string component = 1;
+  string status = 2;
+  string version = 3;
+  map<string, string> metrics = 4;
+}
+
+// 音频请求
+message AudioRequest {
+  bytes audio_data = 1;
+  string format = 2; // wav, mp3, etc.
+  int32 sample_rate = 3;
+  int32 channels = 4;
+}
+
+// 音频响应
+message AudioResponse {
+  bytes audio_data = 1;
+  string format = 2;
+  string result = 3; // 识别结果或处理结果
+  float confidence = 4;
+}
+
+// 硬件检测请求
+message DetectHardwareRequest {
+  bool detailed = 1; // 是否需要详细信息
+}
+
+// 硬件检测响应
+message DetectHardwareResponse {
+  string chip_type = 1; // 芯片类型：CPU, GPU, NPU, TPU等
+  string chip_model = 2; // 芯片型号
+  string vendor = 3; // 芯片厂商
+  int32 cores = 4; // 核心数
+  int64 memory = 5; // 内存大小（字节）
+  bool supports_int8 = 6; // 是否支持INT8量化
+  bool supports_fp16 = 7; // 是否支持FP16量化
+  bool supports_tensorrt = 8; // 是否支持TensorRT
+  bool supports_openvino = 9; // 是否支持OpenVINO
+  map<string, string> details = 10; // 详细信息
+}
+
+// 模型优化请求
+message OptimizeModelRequest {
+  string model_path = 1; // 模型路径
+  string model_format = 2; // 模型格式：ONNX, TensorFlow, PyTorch等
+  string optimization_target = 3; // 优化目标：latency, throughput, memory等
+  string quantization_type = 4; // 量化类型：INT8, FP16, FP32等
+  bool enable_tensorrt = 5; // 是否启用TensorRT
+  bool enable_openvino = 6; // 是否启用OpenVINO
+  map<string, string> parameters = 7; // 其他参数
+}
+
+// 模型优化响应
+message OptimizeModelResponse {
+  bool success = 1; // 优化是否成功
+  string optimized_model_path = 2; // 优化后的模型路径
+  float original_size = 3; // 原始模型大小（MB）
+  float optimized_size = 4; // 优化后模型大小（MB）
+  float optimization_ratio = 5; // 优化比例
+  map<string, string> metrics = 6; // 性能指标
+  string error_message = 7; // 错误信息
+}
+
+// 获取优化模型请求
+message GetOptimizedModelRequest {
+  string model_name = 1; // 模型名称
+  string chip_type = 2; // 芯片类型
+  string optimization_level = 3; // 优化级别：basic, medium, advanced
+}
+
+// 获取优化模型响应
+message GetOptimizedModelResponse {
+  bool success = 1; // 是否成功
+  string model_path = 2; // 模型路径
+  string model_url = 3; // 模型下载URL
+  string model_version = 4; // 模型版本
+  string optimization_level = 5; // 优化级别
+  map<string, string> model_info = 6; // 模型信息
+  string error_message = 7; // 错误信息
+}
+
+// 运行推理请求
+message RunInferenceRequest {
+  string model_path = 1; // 模型路径
+  map<string, bytes> inputs = 2; // 输入数据
+  map<string, string> parameters = 3; // 推理参数
+  bool enable_hardware_acceleration = 4; // 是否启用硬件加速
+  string acceleration_type = 5; // 加速类型：auto, tensorrt, openvino, cuda等
+}
+
+// 运行推理响应
+message RunInferenceResponse {
+  bool success = 1; // 推理是否成功
+  map<string, bytes> outputs = 2; // 输出数据
+  float inference_time = 3; // 推理时间（毫秒）
+  string error_message = 4; // 错误信息
+  string used_acceleration = 5; // 使用的加速类型
+  float energy_consumption = 6; // 能耗（毫瓦时）
+}
+
+// 能耗管理请求
+message EnergyManagementRequest {
+  string mode = 1; // 模式：performance, balanced, power_saving
+  float max_power_budget = 2; // 最大功率预算（毫瓦）
+  bool enable_dynamic_scaling = 3; // 是否启用动态缩放
+}
+
+// 能耗管理响应
+message EnergyManagementResponse {
+  bool success = 1; // 设置是否成功
+  string current_mode = 2; // 当前模式
+  float current_power_budget = 3; // 当前功率预算
+  map<string, float> energy_statistics = 4; // 能耗统计
+  string error_message = 5; // 错误信息
+}
+
+// 硬件加速配置请求
+message HardwareAccelerationRequest {
+  string acceleration_type = 1; // 加速类型：tensorrt, openvino, cuda, nnapi等
+  map<string, string> configuration = 2; // 配置参数
+  bool enable = 3; // 是否启用
+}
+
+// 硬件加速配置响应
+message HardwareAccelerationResponse {
+  bool success = 1; // 配置是否成功
+  string acceleration_type = 2; // 加速类型
+  bool enabled = 3; // 是否启用
+  map<string, string> configuration = 4; // 配置参数
+  string error_message = 5; // 错误信息
+}
+
+// 获取硬件能力请求
+message GetHardwareCapabilitiesRequest {
+  bool detailed = 1; // 是否需要详细信息
+}
+
+// 获取硬件能力响应
+message GetHardwareCapabilitiesResponse {
+  bool success = 1; // 获取是否成功
+  repeated HardwareCapability capabilities = 2; // 硬件能力列表
+  string error_message = 3; // 错误信息
+}
+
+// 硬件能力消息
+message HardwareCapability {
+  string type = 1; // 硬件类型：CPU, GPU, NPU, TPU等
+  string model = 2; // 硬件型号
+  string vendor = 3; // 硬件厂商
+  int32 cores = 4; // 核心数
+  int64 memory = 5; // 内存大小（字节）
+  bool supports_int8 = 6; // 是否支持INT8量化
+  bool supports_fp16 = 7; // 是否支持FP16量化
+  bool supports_tensorrt = 8; // 是否支持TensorRT
+  bool supports_openvino = 9; // 是否支持OpenVINO
+  bool supports_cuda = 10; // 是否支持CUDA
+  bool supports_nnapi = 11; // 是否支持NNAPI
+  map<string, string> features = 12; // 其他特性
+  map<string, float> performance = 13; // 性能指标
+}
+
+// 边缘服务定义
+service EdgeService {
+  // 健康检查
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
+  
+  // 获取服务状态
+  rpc GetStatus(StatusRequest) returns (StatusResponse) {};
+  
+  // 音频流处理（双向流）
+  rpc StreamAudio(stream AudioRequest) returns (stream AudioResponse) {};
+  
+  // 芯片检测
+  rpc DetectHardware(DetectHardwareRequest) returns (DetectHardwareResponse) {};
+  
+  // 模型优化
+  rpc OptimizeModel(OptimizeModelRequest) returns (OptimizeModelResponse) {};
+  
+  // 获取优化模型
+  rpc GetOptimizedModel(GetOptimizedModelRequest) returns (GetOptimizedModelResponse) {};
+  
+  // 运行推理
+  rpc RunInference(RunInferenceRequest) returns (RunInferenceResponse) {};
+  
+  // 能耗管理
+  rpc ManageEnergy(EnergyManagementRequest) returns (EnergyManagementResponse) {};
+  
+  // 硬件加速配置
+  rpc ConfigureHardwareAcceleration(HardwareAccelerationRequest) returns (HardwareAccelerationResponse) {};
+  
+  // 获取硬件能力
+  rpc GetHardwareCapabilities(GetHardwareCapabilitiesRequest) returns (GetHardwareCapabilitiesResponse) {};
+}

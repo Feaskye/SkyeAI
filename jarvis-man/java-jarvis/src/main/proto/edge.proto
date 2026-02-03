@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package api;
+
+// 边缘服务定义
+service EdgeService {
+  // 健康检查
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
+  
+  // 获取服务状态
+  rpc GetStatus(StatusRequest) returns (StatusResponse) {};
+  
+  // 音频流处理（双向流）
+  rpc StreamAudio(stream AudioRequest) returns (stream AudioResponse) {};
+}
+
+// 健康检查请求
+message HealthCheckRequest {
+  string service = 1;
+}
+
+// 健康检查响应
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+  string service = 2;
+  string version = 3;
+}
+
+// 状态查询请求
+message StatusRequest {
+  string component = 1;
+}
+
+// 状态查询响应
+message StatusResponse {
+  string component = 1;
+  string status = 2;
+  string version = 3;
+  map<string, string> metrics = 4;
+}
+
+// 音频请求
+message AudioRequest {
+  bytes audio_data = 1;
+  string format = 2; // wav, mp3, etc.
+  int32 sample_rate = 3;
+  int32 channels = 4;
+}
+
+// 音频响应
+message AudioResponse {
+  bytes audio_data = 1;
+  string format = 2;
+  string result = 3; // 识别结果或处理结果
+  float confidence = 4;
+}

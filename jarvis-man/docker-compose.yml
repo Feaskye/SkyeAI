@@ -1,0 +1,370 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: jarvis-postgres
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_DB=jarvis
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - jarvis-network
+
+  # Nacos服务发现和配置中心
+  # nacos:
+  #   image: nacos/nacos-server:latest
+  #   container_name: jarvis-nacos
+  #   ports:
+  #     - "8848:8848"
+  #     - "9848:9848"
+  #     - "9849:9849"
+  #   environment:
+  #     - MODE=standalone
+  #     - NACOS_AUTH_ENABLE=false
+  #   volumes:
+  #     - nacos_data:/home/nacos/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - jarvis-network
+
+  # Redis缓存
+  redis:
+    image: redis:latest
+    container_name: jarvis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Mosquitto MQTT服务器
+  mqtt:
+    image: eclipse-mosquitto:latest
+    container_name: jarvis-mqtt
+    ports:
+      - "9003:1883"  # MQTT端口
+      - "9004:9001"  # WebSocket端口
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Ollama - 本地LLM服务
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: jarvis-ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   restart: unless-stopped
+  #   networks:
+  #     - jarvis-network
+
+  # Qdrant - 向量数据库
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: jarvis-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Go边缘代理
+  edge-proxy:
+    build:
+      context: jarvis-edge
+      dockerfile: Dockerfile
+    container_name: jarvis-edge
+    ports:
+      - "8070:8081"
+      - "9092:9092"
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 数据服务
+  jarvis-data:
+    build:
+      context: ./jarvis-data
+      dockerfile: Dockerfile
+    container_name: jarvis-data
+    ports:
+      - "8081:8081"
+      - "9091:9091"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # RAG服务
+  jarvis-rag:
+    build:
+      context: ./jarvis-rag
+      dockerfile: Dockerfile
+    container_name: jarvis-rag
+    ports:
+      - "8082:8082"
+      - "9093:9093"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GRPC_CLIENT_JARVIS_DATA_ADDRESS=jarvis-data:9091
+    depends_on:
+      - qdrant
+      - jarvis-data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 知识库服务
+  jarvis-knowledge:
+    build:
+      context: ./jarvis-knowledge
+      dockerfile: Dockerfile
+    container_name: jarvis-knowledge
+    ports:
+      - "8083:8083"
+      - "9094:9094"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GRPC_CLIENT_JARVIS_DATA_ADDRESS=jarvis-data:9091
+    depends_on:
+      - qdrant
+      - jarvis-data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Dify集成服务
+  jarvis-dify:
+    build:
+      context: ./jarvis-dify
+      dockerfile: Dockerfile
+    container_name: jarvis-dify
+    ports:
+      - "8084:8084"
+      - "9095:9095"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - DIFY_BASE_URL=http://localhost:5001
+      - GRPC_CLIENT_JARVIS_DATA_ADDRESS=jarvis-data:9091
+    depends_on:
+      - jarvis-data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Text-to-SQL服务
+  jarvis-sql:
+    build:
+      context: ./jarvis-sql
+      dockerfile: Dockerfile
+    container_name: jarvis-sql
+    ports:
+      - "8085:8085"
+      - "9096:9096"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - GRPC_CLIENT_JARVIS_DATA_ADDRESS=jarvis-data:9091
+    depends_on:
+      - jarvis-data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Advisor服务
+  jarvis-advisor:
+    build:
+      context: ./jarvis-advisor
+      dockerfile: Dockerfile
+    container_name: jarvis-advisor
+    ports:
+      - "8086:8086"
+      - "9097:9097"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - GRPC_CLIENT_JARVIS_DATA_ADDRESS=jarvis-data:9091
+    depends_on:
+      - jarvis-data
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 前端服务
+  jarvis-frontend:
+    build:
+      context: ./jarvis-frontend
+      dockerfile: Dockerfile
+    container_name: jarvis-frontend
+    ports:
+      - "8087:8087"
+      - "9098:9098"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # LLM服务
+  jarvis-llm:
+    build:
+      context: ./jarvis-llm
+      dockerfile: Dockerfile
+    container_name: jarvis-llm
+    ports:
+      - "8088:8088"
+      - "9099:9099"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 用户服务
+  jarvis-user:
+    build:
+      context: ./jarvis-user
+      dockerfile: Dockerfile
+    container_name: jarvis-user
+    ports:
+      - "8089:8089"
+      - "9100:9100"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 认知服务
+  jarvis-cognition:
+    build:
+      context: ./jarvis-cognition
+      dockerfile: Dockerfile
+    container_name: jarvis-cognition
+    ports:
+      - "8090:8090"
+      - "9101:9101"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # 主动服务
+  jarvis-proactive:
+    build:
+      context: ./jarvis-proactive
+      dockerfile: Dockerfile
+    container_name: jarvis-proactive
+    ports:
+      - "8091:8091"
+      - "9102:9102"
+    environment:
+      - NACOS_SERVER_ADDR=nacos:8848
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Skills服务
+  jarvis-skills:
+    build:
+      context: ./jarvis-skills
+      dockerfile: Dockerfile
+    container_name: jarvis-skills
+    ports:
+      - "8092:8092"
+      - "9103:9103"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jarvis
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+    depends_on:
+      []
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+  # Java主控服务
+  java-jarvis:
+    build:
+      context: ./java-jarvis
+      dockerfile: Dockerfile
+    container_name: jarvis-java
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
+      - GRPC_CLIENT_EDGE_ADDRESS=edge-proxy:9092
+      - MQTT_BROKER_URL=tcp://mqtt:1883
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+    depends_on:
+      - edge-proxy
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - jarvis-network
+
+volumes:
+  postgres_data:
+  nacos_data:
+  redis_data:
+  ollama_data:
+  qdrant_data:
+  mosquitto_data:
+  mosquitto_logs:
+
+networks:
+  jarvis-network:
+    driver: bridge

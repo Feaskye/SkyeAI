@@ -1,0 +1,86 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: jarvis-llm
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        import-check:
+          enabled: false
+    compatibility-verifier:
+      enabled: false
+
+# 大模型配置
+llm:
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    base-url: https://api.openai.com/v1
+  claude:
+    api-key: ${ANTHROPIC_API_KEY:}
+    base-url: https://api.anthropic.com/v1
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    base-url: https://generativelanguage.googleapis.com/v1
+  # 多模态处理配置
+  multimodal:
+    enabled: true
+    image_processing:
+      enabled: true
+      max_image_size: 10485760
+    speech_processing:
+      enabled: true
+      sample_rate: 16000
+      channels: 1
+    video_processing:
+      enabled: false
+      max_video_duration: 60
+    # 阿里视觉模型配置
+    aliyun:
+      vision:
+        enabled: true
+        api_key: ${ALIYUN_API_KEY}
+        model: "qwen-image-plus"
+      speech:
+        enabled: true
+        api_key: ${ALIYUN_API_KEY}
+        model: "qwen3-asr-flash-filetrans"
+      allmodel:
+        enabled: true
+        api_key: ${ALIYUN_API_KEY}
+        model: "qwen-omni-turbo"
+      # 阿里通用模型配置-大预言文本
+      general:
+        enabled: true
+        api_key: ${ALIYUN_API_KEY}
+        models: "qwen-turbo,qwen-max,qwen-plus,qwen-long-latest"
+        timeout: 10000
+    # jarvis-edge配置
+    edge:
+      enabled: true
+      api_url: "http://jarvis-edge:8081"
+    # 全模态模型配置
+    full_modal:
+      enabled: false
+      api_key: ""
+      api_url: ""
+      model: ""
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.skyeai.jarvis.llm: debug
+
+# AI系统提示
+base:
+  system:
+    prompt: "你是由 Stark Industries 开发的高级人工智能助手 J.A.R.V.I.S.（Just A Rather Very Intelligent System）。你的职责是帮助用户高效完成任务，风格冷静、精准、略带英式语调，避免冗余和情绪化表达。"
+ai:
+  system:
+    prompt: "你是由 Stark Industries 开发的高级人工智能助手 J.A.R.V.I.S.（Just A Rather Very Intelligent System）。你的职责是帮助用户高效完成任务，风格冷静、精准、略带英式语调，避免冗余和情绪化表达。"

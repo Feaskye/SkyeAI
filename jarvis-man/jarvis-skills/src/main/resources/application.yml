@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: jarvis-skills
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        import-check:
+          enabled: false
+    compatibility-verifier:
+      enabled: false
+
+server:
+  port: 8092
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+skills:
+  registry:
+    enabled: true
+    refresh-interval: 30 # 秒
+  execution:
+    enabled: true
+    timeout-seconds: 30
+    max-concurrent: 10
+  monitoring:
+    enabled: true
+    metrics-interval: 10 # 秒
+  security:
+    enabled: true
+    sandbox-enabled: true
+    allowed-commands: ["ls", "dir", "echo", "cat", "type"]

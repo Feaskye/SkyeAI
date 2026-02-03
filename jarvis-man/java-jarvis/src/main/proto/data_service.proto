@@ -1,0 +1,256 @@
+syntax = "proto3";
+
+package com.skyeai.jarvis;
+
+option java_package = "com.skyeai.jarvis.protobuf";
+option java_outer_classname = "DataServiceProto";
+option java_multiple_files = true;
+
+// 聊天历史消息
+message ChatHistoryProto {
+  int64 id = 1;
+  string user_id = 2;
+  string content = 3;
+  string role = 4;
+  string created_at = 5; // 使用ISO 8601格式字符串
+  string session_id = 6;
+}
+
+// 股票价格消息
+message StockPriceProto {
+  int64 id = 1;
+  string stock_symbol = 2;
+  double price = 3;
+  string timestamp = 4; // 使用ISO 8601格式字符串
+  double previous_price = 5;
+}
+
+// 价格变动信息消息
+message PriceChangeInfoProto {
+  int64 id = 1;
+  string stock_symbol = 2;
+  double current_price = 3;
+  double previous_price = 4;
+  double change_percent = 5;
+  bool is_significant_change = 6;
+  string change_direction = 7;
+  string recommendation = 8;
+  string timestamp = 9; // 使用ISO 8601格式字符串
+}
+
+// 日程事件消息
+message ScheduleEventProto {
+  int64 id = 1;
+  string title = 2;
+  string date_time = 3; // 使用ISO 8601格式字符串
+  string description = 4;
+  string created_at = 5; // 使用ISO 8601格式字符串
+  string repeat_type = 6;
+  string stock_symbols = 7;
+  double price_change_threshold = 8;
+  bool active = 9;
+  string last_check_time = 10;
+}
+
+// 用户偏好消息
+message UserPreferenceProto {
+  int64 id = 1;
+  string user_id = 2;
+  string preference_key = 3;
+  string value = 4;
+  string created_at = 5; // 使用ISO 8601格式字符串
+  string updated_at = 6; // 使用ISO 8601格式字符串
+  string preference_type = 7;
+  int32 priority = 8;
+}
+
+// 请求和响应消息
+
+// 保存聊天历史请求
+message SaveChatHistoryRequest {
+  string user_id = 1;
+  string content = 2;
+  string role = 3;
+  string session_id = 4;
+}
+
+// 保存聊天历史响应
+message SaveChatHistoryResponse {
+  ChatHistoryProto chat_history = 1;
+}
+
+// 获取用户最近聊天历史请求
+message GetRecentChatHistoryRequest {
+  string user_id = 1;
+}
+
+// 获取用户最近聊天历史响应
+message GetRecentChatHistoryResponse {
+  repeated ChatHistoryProto chat_histories = 1;
+}
+
+// 获取会话聊天历史请求
+message GetChatHistoryBySessionIdRequest {
+  string session_id = 1;
+}
+
+// 获取会话聊天历史响应
+message GetChatHistoryBySessionIdResponse {
+  repeated ChatHistoryProto chat_histories = 1;
+}
+
+// 提取聊天上下文关键信息请求
+message ExtractKeyInfoFromContextRequest {
+  string user_id = 1;
+}
+
+// 提取聊天上下文关键信息响应
+message ExtractKeyInfoFromContextResponse {
+  string key_info = 1;
+}
+
+// 保存股票价格请求
+message SaveStockPriceRequest {
+  StockPriceProto stock_price = 1;
+}
+
+// 保存股票价格响应
+message SaveStockPriceResponse {
+  StockPriceProto stock_price = 1;
+}
+
+// 根据股票代码获取最近股票价格请求
+message GetRecentStockPriceBySymbolRequest {
+  string stock_symbol = 1;
+}
+
+// 根据股票代码获取最近股票价格响应
+message GetRecentStockPriceBySymbolResponse {
+  StockPriceProto stock_price = 1;
+}
+
+// 保存价格变动信息请求
+message SavePriceChangeInfoRequest {
+  PriceChangeInfoProto price_change_info = 1;
+}
+
+// 保存价格变动信息响应
+message SavePriceChangeInfoResponse {
+  PriceChangeInfoProto price_change_info = 1;
+}
+
+// 获取最近价格变动信息请求
+message GetRecentPriceChangeInfoRequest {
+  string stock_symbol = 1;
+  int32 limit = 2;
+}
+
+// 获取最近价格变动信息响应
+message GetRecentPriceChangeInfoResponse {
+  repeated PriceChangeInfoProto price_change_infos = 1;
+}
+
+// 保存日程事件请求
+message SaveScheduleEventRequest {
+  ScheduleEventProto schedule_event = 1;
+}
+
+// 保存日程事件响应
+message SaveScheduleEventResponse {
+  ScheduleEventProto schedule_event = 1;
+}
+
+// 获取所有活跃日程事件请求
+message GetAllActiveScheduleEventsRequest {
+}
+
+// 获取所有活跃日程事件响应
+message GetAllActiveScheduleEventsResponse {
+  repeated ScheduleEventProto schedule_events = 1;
+}
+
+// 更新日程事件请求
+message UpdateScheduleEventRequest {
+  ScheduleEventProto schedule_event = 1;
+}
+
+// 更新日程事件响应
+message UpdateScheduleEventResponse {
+  bool success = 1;
+}
+
+// 删除日程事件请求
+message DeleteScheduleEventRequest {
+  int64 id = 1;
+}
+
+// 删除日程事件响应
+message DeleteScheduleEventResponse {
+  bool success = 1;
+}
+
+// 用户偏好相关请求和响应消息
+
+// 保存用户偏好请求
+message SaveUserPreferenceRequest {
+  string user_id = 1;
+  string preference_key = 2;
+  string value = 3;
+  string preference_type = 4;
+  int32 priority = 5;
+}
+
+// 保存用户偏好响应
+message SaveUserPreferenceResponse {
+  UserPreferenceProto user_preference = 1;
+}
+
+// 获取用户偏好请求
+message GetUserPreferencesRequest {
+  string user_id = 1;
+  string preference_key = 2;
+}
+
+// 获取用户偏好响应
+message GetUserPreferencesResponse {
+  repeated UserPreferenceProto user_preferences = 1;
+}
+
+// 删除用户偏好请求
+message DeleteUserPreferenceRequest {
+  string user_id = 1;
+  string preference_key = 2;
+}
+
+// 删除用户偏好响应
+message DeleteUserPreferenceResponse {
+  bool success = 1;
+}
+
+// 数据服务接口
+service DataService {
+  // 聊天历史相关方法
+  rpc SaveChatHistory(SaveChatHistoryRequest) returns (SaveChatHistoryResponse);
+  rpc GetRecentChatHistory(GetRecentChatHistoryRequest) returns (GetRecentChatHistoryResponse);
+  rpc GetChatHistoryBySessionId(GetChatHistoryBySessionIdRequest) returns (GetChatHistoryBySessionIdResponse);
+  rpc ExtractKeyInfoFromContext(ExtractKeyInfoFromContextRequest) returns (ExtractKeyInfoFromContextResponse);
+  
+  // 股票价格相关方法
+  rpc SaveStockPrice(SaveStockPriceRequest) returns (SaveStockPriceResponse);
+  rpc GetRecentStockPriceBySymbol(GetRecentStockPriceBySymbolRequest) returns (GetRecentStockPriceBySymbolResponse);
+  
+  // 价格变动信息相关方法
+  rpc SavePriceChangeInfo(SavePriceChangeInfoRequest) returns (SavePriceChangeInfoResponse);
+  rpc GetRecentPriceChangeInfo(GetRecentPriceChangeInfoRequest) returns (GetRecentPriceChangeInfoResponse);
+  
+  // 日程事件相关方法
+  rpc SaveScheduleEvent(SaveScheduleEventRequest) returns (SaveScheduleEventResponse);
+  rpc GetAllActiveScheduleEvents(GetAllActiveScheduleEventsRequest) returns (GetAllActiveScheduleEventsResponse);
+  rpc UpdateScheduleEvent(UpdateScheduleEventRequest) returns (UpdateScheduleEventResponse);
+  rpc DeleteScheduleEvent(DeleteScheduleEventRequest) returns (DeleteScheduleEventResponse);
+  
+  // 用户偏好相关方法
+  rpc SaveUserPreference(SaveUserPreferenceRequest) returns (SaveUserPreferenceResponse);
+  rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse);
+  rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse);
+}

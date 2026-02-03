@@ -1,0 +1,48 @@
+[server]
+port = 8080
+host = "0.0.0.0"
+
+[perception]
+enabled = true
+watch_paths = ["~", "D:\\Documents"]
+file_extensions = [".txt", ".md", ".docx", ".pdf"]
+poll_interval = 5 # seconds
+
+[decision]
+enabled = true
+model = "claude-3-5-sonnet-20240620"
+temperature = 0.7
+max_tokens = 1024
+openai_api_key = "your-api-key-here"
+openai_base_url = "https://api.openai.com/v1"
+
+[execution]
+enabled = true
+allowed_commands = ["ls", "dir", "echo", "cat", "type"]
+max_execution_time = 30 # seconds
+working_directory = "."
+
+[skeleton]
+enabled = true
+message_buffer_size = 100
+max_workers = 5
+
+[grpc]
+enabled = true
+port = 9090
+host = "0.0.0.0"
+
+[nacos]
+enabled = true
+server_addr = "localhost:8848"
+namespace_id = ""
+group = "DEFAULT_GROUP"
+service_name = "jarvis-proactive"
+cluster_name = "DEFAULT"
+
+[logging]
+level = "info"
+file = "log/proactive.log"
+max_size = 100 # MB
+max_backups = 5
+max_age = 30 # days
