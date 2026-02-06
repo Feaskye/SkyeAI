@@ -1,0 +1,73 @@
+# Finance服务配置文件
+
+# 服务器配置
+server:
+  port: 8080
+  host: 0.0.0.0
+
+# 数据库配置
+database:
+  mysql:
+    host: localhost
+    port: 3306
+    user: root
+    password: root
+    database: jarvis_finance
+
+# Redis配置
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+  # 回测数据过期时间（秒）
+  backtest_expiry: 432000  # 5天
+
+# RabbitMQ配置
+rabbitmq:
+  host: localhost
+  port: 5672
+  user: guest
+  password: guest
+  vhost: /
+  exchange: finance_exchange
+  queue:
+    alerts: finance_alerts
+    decisions: finance_decisions
+
+# API服务器配置
+api:
+  host: 0.0.0.0
+  port: 8080
+  # 外部API配置
+  external:
+    stock:
+      base_url: "https://api.example.com/stock"
+      api_key: "your_api_key"
+    news:
+      sources:
+        - name: "sina"
+          url: "https://finance.sina.com.cn"
+        - name: "eastmoney"
+          url: "https://www.eastmoney.com"
+
+# 决策配置
+decision:
+  # 决策间隔时间（分钟）
+  interval_minutes: 5  # 5分钟
+  # LLM服务配置
+  llm:
+    host: localhost
+    port: 9090
+
+# 回测配置
+backtest:
+  # 回测天数
+  days: 10
+  # 结果保留天数
+  retention_days: 5
+
+# 日志配置
+log:
+  level: "info"
+  file: "logs/finance.log"

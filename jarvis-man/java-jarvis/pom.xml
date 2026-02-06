@@ -94,10 +94,22 @@
             <version>${protobuf.version}</version>
         </dependency>
 
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -173,6 +185,18 @@
             <groupId>com.offbytwo.jenkins</groupId>
             <artifactId>jenkins-client</artifactId>
             <version>0.3.8</version>
+        </dependency>
+        
+        <!-- 内部服务依赖 -->
+        <dependency>
+            <groupId>com.skyeai</groupId>
+            <artifactId>jarvis-skills</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.skyeai</groupId>
+            <artifactId>jarvis-sql</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

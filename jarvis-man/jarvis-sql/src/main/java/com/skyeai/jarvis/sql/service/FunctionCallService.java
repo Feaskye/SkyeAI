@@ -8,7 +8,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FunctionCallService {
@@ -25,7 +27,10 @@ public class FunctionCallService {
     @Value("${tools.discovery.scan-packages}")
     private List<String> scanPackages;
 
-    private final List<ToolDefinition> tools = new ArrayList<>();
+    // 使用Map存储工具，支持版本管理
+    private final Map<String, Map<String, ToolDefinition>> toolsByVersion = new HashMap<>();
+    // 默认版本
+    private static final String DEFAULT_VERSION = "1.0";
 
     @PostConstruct
     public void init() {
@@ -56,7 +61,12 @@ public class FunctionCallService {
                 }
             }
             
-            System.out.println("Discovered " + tools.size() + " tools");
+            // 统计工具数量
+            int totalTools = 0;
+            for (Map<String, ToolDefinition> versionMap : toolsByVersion.values()) {
+                totalTools += versionMap.size();
+            }
+            System.out.println("Discovered " + totalTools + " tools");
         } catch (Exception e) {
             System.err.println("Failed to discover tools: " + e.getMessage());
         }
@@ -83,8 +93,21 @@ public class FunctionCallService {
                             tool.setName(toolAnnotation.name());
                             tool.setDescription(toolAnnotation.description());
                             tool.setClassName(className);
-                            tools.add(tool);
-                            System.out.println("Discovered tool: " + tool.getName() + " - " + tool.getDescription());
+                            tool.setVersion(DEFAULT_VERSION);
+                            
+                            // 处理参数
+                            String[] params = toolAnnotation.parameters();
+                            if (params != null && params.length > 0) {
+                                List<String> parameterList = new ArrayList<>();
+                                for (String param : params) {
+                                    parameterList.add(param);
+                                }
+                                tool.setParameters(parameterList);
+                            }
+                            
+                            tool.setReturnType(toolAnnotation.returnType());
+                            registerTool(tool);
+                            System.out.println("Discovered tool: " + tool.getName() + " v" + tool.getVersion() + " - " + tool.getDescription());
                         }
                     } catch (Exception e) {
                         System.err.println("Failed to load class: " + className + ", error: " + e.getMessage());
@@ -99,19 +122,34 @@ public class FunctionCallService {
      * @return 工具列表
      */
     public List<ToolDefinition> getAllTools() {
-        return tools;
+        List<ToolDefinition> allTools = new ArrayList<>();
+        for (Map<String, ToolDefinition> versionMap : toolsByVersion.values()) {
+            allTools.addAll(versionMap.values());
+        }
+        return allTools;
     }
 
     /**
-     * 根据名称获取工具
+     * 根据名称获取工具（默认版本）
      * @param name 工具名称
      * @return 工具定义
      */
     public ToolDefinition getToolByName(String name) {
-        return tools.stream()
-                .filter(tool -> tool.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        return getToolByName(name, DEFAULT_VERSION);
+    }
+
+    /**
+     * 根据名称和版本获取工具
+     * @param name 工具名称
+     * @param version 工具版本
+     * @return 工具定义
+     */
+    public ToolDefinition getToolByName(String name, String version) {
+        Map<String, ToolDefinition> versionMap = toolsByVersion.get(version);
+        if (versionMap != null) {
+            return versionMap.get(name);
+        }
+        return null;
     }
 
     /**
@@ -119,8 +157,35 @@ public class FunctionCallService {
      * @param tool 工具定义
      */
     public void registerTool(ToolDefinition tool) {
-        tools.add(tool);
-        System.out.println("Registered tool: " + tool.getName());
+        String version = tool.getVersion() != null ? tool.getVersion() : DEFAULT_VERSION;
+        toolsByVersion.computeIfAbsent(version, k -> new HashMap<>()).put(tool.getName(), tool);
+        System.out.println("Registered tool: " + tool.getName() + " v" + version);
+    }
+
+    /**
+     * 注销工具
+     * @param name 工具名称
+     * @param version 工具版本
+     */
+    public void unregisterTool(String name, String version) {
+        Map<String, ToolDefinition> versionMap = toolsByVersion.get(version);
+        if (versionMap != null) {
+            versionMap.remove(name);
+            System.out.println("Unregistered tool: " + name + " v" + version);
+        }
+    }
+
+    /**
+     * 获取指定版本的所有工具
+     * @param version 工具版本
+     * @return 工具列表
+     */
+    public List<ToolDefinition> getToolsByVersion(String version) {
+        Map<String, ToolDefinition> versionMap = toolsByVersion.get(version);
+        if (versionMap != null) {
+            return new ArrayList<>(versionMap.values());
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -131,6 +196,7 @@ public class FunctionCallService {
         String description();
         String[] parameters() default {};
         String returnType() default "string";
+        String version() default "1.0";
     }
 
     /**
@@ -142,6 +208,8 @@ public class FunctionCallService {
         private String className;
         private List<String> parameters;
         private String returnType;
+        private String version;
+        private List<String> dependencies;
 
         // Getters and Setters
         public String getName() {
@@ -182,6 +250,22 @@ public class FunctionCallService {
 
         public void setReturnType(String returnType) {
             this.returnType = returnType;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public List<String> getDependencies() {
+            return dependencies;
+        }
+
+        public void setDependencies(List<String> dependencies) {
+            this.dependencies = dependencies;
         }
     }
 }

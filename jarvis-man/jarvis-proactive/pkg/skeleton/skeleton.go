@@ -4,6 +4,9 @@ import (
 	"log"
 	"sync"
 	"time"
+
+	"github.com/skyeai/jarvis-proactive/pkg/cache"
+	"github.com/skyeai/jarvis-proactive/pkg/mq"
 )
 
 // Message 消息结构
@@ -15,6 +18,7 @@ type Message struct {
 }
 
 // MessageBus 消息总线
+
 type MessageBus struct {
 	messageChan   chan Message
 	subscribers   map[string][]chan Message
@@ -22,6 +26,21 @@ type MessageBus struct {
 	bufferSize    int
 	stopChan      chan struct{}
 	wg            sync.WaitGroup
+	rabbitMQ      *mq.RabbitMQClient
+	redis         *cache.RedisClient
+}
+
+// NewMessageBusWithExternal 创建带外部系统支持的消息总线实例
+
+func NewMessageBusWithExternal(bufferSize int, rabbitMQ *mq.RabbitMQClient, redis *cache.RedisClient) *MessageBus {
+	return &MessageBus{
+		messageChan: make(chan Message, bufferSize),
+		subscribers: make(map[string][]chan Message),
+		bufferSize:  bufferSize,
+		stopChan:    make(chan struct{}),
+		rabbitMQ:    rabbitMQ,
+		redis:       redis,
+	}
 }
 
 // NewMessageBus 创建消息总线实例
@@ -77,6 +96,7 @@ func (mb *MessageBus) Subscribe(messageType string) chan Message {
 }
 
 // Unsubscribe 取消订阅
+
 func (mb *MessageBus) Unsubscribe(messageType string, subChan chan Message) {
 	mb.subscribersMu.Lock()
 	defer mb.subscribersMu.Unlock()
@@ -91,6 +111,18 @@ func (mb *MessageBus) Unsubscribe(messageType string, subChan chan Message) {
 			}
 		}
 	}
+}
+
+// GetRedisClient 获取Redis客户端
+
+func (mb *MessageBus) GetRedisClient() *cache.RedisClient {
+	return mb.redis
+}
+
+// GetRabbitMQClient 获取RabbitMQ客户端
+
+func (mb *MessageBus) GetRabbitMQClient() *mq.RabbitMQClient {
+	return mb.rabbitMQ
 }
 
 // processMessages 处理消息
@@ -108,6 +140,7 @@ func (mb *MessageBus) processMessages() {
 }
 
 // dispatchMessage 分发消息
+
 func (mb *MessageBus) dispatchMessage(message Message) {
 	mb.subscribersMu.RLock()
 	defer mb.subscribersMu.RUnlock()
@@ -135,6 +168,25 @@ func (mb *MessageBus) dispatchMessage(message Message) {
 				// 订阅者通道已满，丢弃消息
 				log.Println("Wildcard subscriber buffer full, message discarded")
 			}
+		}
+	}
+
+	// 转发消息到RabbitMQ（如果配置）
+	if mb.rabbitMQ != nil && mb.rabbitMQ.IsConnected() {
+		if err := mb.rabbitMQ.Publish(message); err != nil {
+			log.Printf("Error publishing message to RabbitMQ: %v", err)
+		} else {
+			log.Printf("Message forwarded to RabbitMQ: %s", message.Type)
+		}
+	}
+
+	// 缓存消息（如果配置且是决策结果）
+	if mb.redis != nil && mb.redis.IsConnected() && message.Type == "decision" {
+		cacheKey := "decision:" + message.Data["file_path"].(string) + ":" + message.Data["event_type"].(string)
+		if err := mb.redis.Set(cacheKey, message.Data["decision"], 10*time.Minute); err != nil {
+			log.Printf("Error caching decision: %v", err)
+		} else {
+			log.Printf("Decision cached: %s", cacheKey)
 		}
 	}
 }

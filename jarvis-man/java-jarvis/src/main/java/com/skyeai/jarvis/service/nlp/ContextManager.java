@@ -1,5 +1,7 @@
 package com.skyeai.jarvis.service.nlp;
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Map;
 /**
  * 上下文管理器，用于管理对话上下文
  */
+@Service
 public class ContextManager {
 
     private final Map<String, List<String>> contextMap;

@@ -26,11 +26,26 @@ public interface ToolAdapterService {
     void unregisterTool(String toolName);
     
     /**
+     * 注销指定版本的工具
+     * @param toolName 工具名称
+     * @param version 工具版本
+     */
+    void unregisterTool(String toolName, String version);
+    
+    /**
      * 获取工具对应的Skill
      * @param toolName 工具名称
      * @return Skill对象
      */
     Skill getToolByName(String toolName);
+    
+    /**
+     * 获取指定版本的工具
+     * @param toolName 工具名称
+     * @param version 工具版本
+     * @return Skill对象
+     */
+    Skill getToolByName(String toolName, String version);
     
     /**
      * 获取所有工具对应的Skill
@@ -45,6 +60,22 @@ public interface ToolAdapterService {
      * @return 执行结果
      */
     SkillExecution executeTool(String toolName, Map<String, Object> parameters);
+    
+    /**
+     * 执行指定版本的工具
+     * @param toolName 工具名称
+     * @param version 工具版本
+     * @param parameters 输入参数
+     * @return 执行结果
+     */
+    SkillExecution executeTool(String toolName, String version, Map<String, Object> parameters);
+    
+    /**
+     * 批量执行工具
+     * @param tasks 任务列表
+     * @return 执行结果列表
+     */
+    List<SkillExecution> executeBatch(List<Map<String, Object>> tasks);
     
     /**
      * 从YAML文件加载工具配置

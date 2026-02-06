@@ -9,8 +9,12 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/skyeai/jarvis-proactive/pkg/api"
+	"github.com/skyeai/jarvis-proactive/pkg/cache"
 	"github.com/skyeai/jarvis-proactive/pkg/decision"
 	"github.com/skyeai/jarvis-proactive/pkg/execution"
+	"github.com/skyeai/jarvis-proactive/pkg/llm"
+	"github.com/skyeai/jarvis-proactive/pkg/mq"
+	"github.com/skyeai/jarvis-proactive/pkg/notification"
 	"github.com/skyeai/jarvis-proactive/pkg/perception"
 	"github.com/skyeai/jarvis-proactive/pkg/skeleton"
 	"gopkg.in/yaml.v3"
@@ -24,10 +28,10 @@ type Config struct {
 	} `yaml:"server"`
 
 	Perception struct {
-		Enabled         bool     `yaml:"enabled"`
-		WatchPaths      []string `yaml:"watch_paths"`
-		FileExtensions  []string `yaml:"file_extensions"`
-		PollInterval    int      `yaml:"poll_interval"`
+		Enabled        bool     `yaml:"enabled"`
+		WatchPaths     []string `yaml:"watch_paths"`
+		FileExtensions []string `yaml:"file_extensions"`
+		PollInterval   int      `yaml:"poll_interval"`
 	} `yaml:"perception"`
 
 	Decision struct {
@@ -40,16 +44,16 @@ type Config struct {
 	} `yaml:"decision"`
 
 	Execution struct {
-		Enabled         bool     `yaml:"enabled"`
-		AllowedCommands []string `yaml:"allowed_commands"`
-		MaxExecutionTime int     `yaml:"max_execution_time"`
-		WorkingDirectory string  `yaml:"working_directory"`
+		Enabled          bool     `yaml:"enabled"`
+		AllowedCommands  []string `yaml:"allowed_commands"`
+		MaxExecutionTime int      `yaml:"max_execution_time"`
+		WorkingDirectory string   `yaml:"working_directory"`
 	} `yaml:"execution"`
 
 	Skeleton struct {
-		Enabled        bool `yaml:"enabled"`
-		MessageBufferSize int `yaml:"message_buffer_size"`
-		MaxWorkers     int  `yaml:"max_workers"`
+		Enabled           bool `yaml:"enabled"`
+		MessageBufferSize int  `yaml:"message_buffer_size"`
+		MaxWorkers        int  `yaml:"max_workers"`
 	} `yaml:"skeleton"`
 
 	GRPC struct {
@@ -59,21 +63,57 @@ type Config struct {
 	} `yaml:"grpc"`
 
 	Nacos struct {
-		Enabled      bool   `yaml:"enabled"`
-		ServerAddr   string `yaml:"server_addr"`
-		NamespaceID  string `yaml:"namespace_id"`
-		Group        string `yaml:"group"`
-		ServiceName  string `yaml:"service_name"`
-		ClusterName  string `yaml:"cluster_name"`
+		Enabled     bool   `yaml:"enabled"`
+		ServerAddr  string `yaml:"server_addr"`
+		NamespaceID string `yaml:"namespace_id"`
+		Group       string `yaml:"group"`
+		ServiceName string `yaml:"service_name"`
+		ClusterName string `yaml:"cluster_name"`
 	} `yaml:"nacos"`
 
 	Logging struct {
-		Level     string `yaml:"level"`
-		File      string `yaml:"file"`
-		MaxSize   int    `yaml:"max_size"`
+		Level      string `yaml:"level"`
+		File       string `yaml:"file"`
+		MaxSize    int    `yaml:"max_size"`
 		MaxBackups int    `yaml:"max_backups"`
-		MaxAge    int    `yaml:"max_age"`
+		MaxAge     int    `yaml:"max_age"`
 	} `yaml:"logging"`
+
+	RabbitMQ struct {
+		Enabled      bool   `yaml:"enabled"`
+		Host         string `yaml:"host"`
+		Port         int    `yaml:"port"`
+		Username     string `yaml:"username"`
+		Password     string `yaml:"password"`
+		VirtualHost  string `yaml:"virtual_host"`
+		Exchange     string `yaml:"exchange"`
+		ExchangeType string `yaml:"exchange_type"`
+		QueueName    string `yaml:"queue_name"`
+		RoutingKey   string `yaml:"routing_key"`
+	} `yaml:"rabbitmq"`
+
+	Redis struct {
+		Enabled     bool   `yaml:"enabled"`
+		Host        string `yaml:"host"`
+		Port        int    `yaml:"port"`
+		Password    string `yaml:"password"`
+		DB          int    `yaml:"db"`
+		CacheExpiry int    `yaml:"cache_expiry"` // 缓存过期时间（分钟）
+	} `yaml:"redis"`
+
+	LLM struct {
+		Enabled     bool   `yaml:"enabled"`
+		ServiceAddr string `yaml:"service_addr"`
+		GRPCPort    int    `yaml:"grpc_port"`
+		APIKey      string `yaml:"api_key"`
+		Timeout     int    `yaml:"timeout"` // 超时时间（秒）
+	} `yaml:"llm"`
+
+	DecisionControl struct {
+		Enabled               bool `yaml:"enabled"`
+		MaxIntervalMinutes    int  `yaml:"max_interval_minutes"`    // 最大交互间隔（分钟）
+		MaxConcurrentRequests int  `yaml:"max_concurrent_requests"` // 最大并发请求数
+	} `yaml:"decision_control"`
 }
 
 func main() {
@@ -83,13 +123,69 @@ func main() {
 	}
 
 	// 加载配置文件
-	config, err := loadConfig("config.toml")
+	config, err := loadConfig("config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
+	// 初始化外部服务客户端
+
+	// 1. 初始化RabbitMQ客户端
+	var rabbitMQClient *mq.RabbitMQClient
+	if config.RabbitMQ.Enabled {
+		rabbitMQConfig := mq.RabbitMQConfig{
+			Host:         config.RabbitMQ.Host,
+			Port:         config.RabbitMQ.Port,
+			Username:     config.RabbitMQ.Username,
+			Password:     config.RabbitMQ.Password,
+			VirtualHost:  config.RabbitMQ.VirtualHost,
+			Exchange:     config.RabbitMQ.Exchange,
+			ExchangeType: config.RabbitMQ.ExchangeType,
+			QueueName:    config.RabbitMQ.QueueName,
+			RoutingKey:   config.RabbitMQ.RoutingKey,
+		}
+		rabbitMQClient = mq.NewRabbitMQClient(rabbitMQConfig)
+		if err := rabbitMQClient.Connect(); err != nil {
+			log.Printf("Warning: Failed to connect to RabbitMQ: %v", err)
+			// 继续执行，不终止程序
+		}
+	}
+
+	// 2. 初始化Redis客户端
+	var redisClient *cache.RedisClient
+	if config.Redis.Enabled {
+		redisConfig := cache.RedisConfig{
+			Host:        config.Redis.Host,
+			Port:        config.Redis.Port,
+			Password:    config.Redis.Password,
+			DB:          config.Redis.DB,
+			CacheExpiry: config.Redis.CacheExpiry,
+		}
+		redisClient = cache.NewRedisClient(redisConfig)
+		if err := redisClient.Connect(); err != nil {
+			log.Printf("Warning: Failed to connect to Redis: %v", err)
+			// 继续执行，不终止程序
+		}
+	}
+
+	// 3. 初始化LLM客户端
+	var llmClient *llm.LLMClient
+	if config.LLM.Enabled {
+		llmConfig := llm.LLMConfig{
+			ServiceAddr: config.LLM.ServiceAddr,
+			GRPCPort:    config.LLM.GRPCPort,
+			APIKey:      config.LLM.APIKey,
+			Timeout:     config.LLM.Timeout,
+		}
+		llmClient = llm.NewLLMClient(llmConfig)
+		if err := llmClient.Connect(); err != nil {
+			log.Printf("Warning: Failed to connect to LLM service: %v", err)
+			// 继续执行，不终止程序
+		}
+	}
+
 	// 初始化消息总线
-	messageBus := skeleton.NewMessageBus(config.Skeleton.MessageBufferSize)
+	messageBus := skeleton.NewMessageBusWithExternal(config.Skeleton.MessageBufferSize, rabbitMQClient, redisClient)
 	messageBus.Start()
 
 	// 初始化服务管理器
@@ -111,14 +207,19 @@ func main() {
 	serviceManager.AddService(perceptionService)
 
 	// 2. 决策服务
+	maxIntervalMinutes := 5 // 默认5分钟
+	if config.DecisionControl.Enabled {
+		maxIntervalMinutes = config.DecisionControl.MaxIntervalMinutes
+	}
 	decisionService := decision.NewDecisionService(
-		config.Decision.OpenAIAPIKey,
-		config.Decision.OpenAIBaseURL,
+		llmClient,
+		redisClient,
 		config.Decision.Model,
 		config.Decision.Temperature,
 		config.Decision.MaxTokens,
 		messageBus,
 		config.Decision.Enabled,
+		maxIntervalMinutes,
 	)
 	serviceManager.AddService(decisionService)
 
@@ -132,7 +233,15 @@ func main() {
 	)
 	serviceManager.AddService(executionService)
 
-	// 4. API服务
+	// 4. 通知服务
+	notificationService := notification.NewNotificationService(
+		messageBus,
+		rabbitMQClient,
+		config.RabbitMQ.Enabled,
+	)
+	serviceManager.AddService(notificationService)
+
+	// 5. API服务
 	apiService := api.NewAPIService(
 		config.Server.Host,
 		config.Server.Port,
@@ -150,6 +259,17 @@ func main() {
 	// 停止所有服务
 	serviceManager.StopAll()
 	messageBus.Stop()
+
+	// 关闭外部服务连接
+	if rabbitMQClient != nil {
+		rabbitMQClient.Close()
+	}
+	if redisClient != nil {
+		redisClient.Close()
+	}
+	if llmClient != nil {
+		llmClient.Close()
+	}
 
 	log.Println("Jarvis Proactive Service stopped")
 }

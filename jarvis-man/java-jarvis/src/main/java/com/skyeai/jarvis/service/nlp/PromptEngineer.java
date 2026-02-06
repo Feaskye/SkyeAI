@@ -1,11 +1,14 @@
 package com.skyeai.jarvis.service.nlp;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
 /**
  * 提示工程师，用于构建增强的提示
  */
+@Service
 public class PromptEngineer {
 
     /**
@@ -28,15 +31,21 @@ public class PromptEngineer {
         }
         
         prompt.append("用户输入：" + text + "\n\n");
-        prompt.append("识别到的意图：" + intentResult.getIntent() + "\n");
-        prompt.append("意图置信度：" + intentResult.getConfidence() + "\n");
         
-        if (!intentResult.getEntities().isEmpty()) {
-            prompt.append("提取到的实体：\n");
-            for (Map.Entry<String, String> entity : intentResult.getEntities().entrySet()) {
-                prompt.append("- " + entity.getKey() + "：" + entity.getValue() + "\n");
+        if (intentResult != null) {
+            prompt.append("识别到的意图：" + intentResult.getIntent() + "\n");
+            prompt.append("意图置信度：" + intentResult.getConfidence() + "\n");
+            
+            if (!intentResult.getEntities().isEmpty()) {
+                prompt.append("提取到的实体：\n");
+                for (Map.Entry<String, String> entity : intentResult.getEntities().entrySet()) {
+                    prompt.append("- " + entity.getKey() + "：" + entity.getValue() + "\n");
+                }
+                prompt.append("\n");
             }
-            prompt.append("\n");
+        } else {
+            prompt.append("识别到的意图：未知\n");
+            prompt.append("意图置信度：0.0\n\n");
         }
         
         prompt.append("请生成一个详细的理解，包括：\n");

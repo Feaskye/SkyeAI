@@ -8,6 +8,7 @@ import com.skyeai.jarvis.skills.service.SkillService;
 import com.skyeai.jarvis.skills.service.ToolAdapterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 工具适配器服务实现类
@@ -27,9 +30,95 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
     @Autowired
     private SkillService skillService;
     
-    // 工具注册表
-    private final Map<String, Skill> tools = new HashMap<>();
+    @Value("${function-call.execution.timeout:30}")
+    private int executionTimeout;
+    
+    @Value("${function-call.execution.max-retries:3}")
+    private int maxRetries;
+    
+    @Value("${function-call.execution.retry-delay:1000}")
+    private int retryDelay;
+    
+    // 工具注册表，支持版本管理
+    private final Map<String, Map<String, Skill>> toolsByVersion = new HashMap<>();
+    // 默认版本
+    private static final String DEFAULT_VERSION = "1.0";
+    // 执行线程池
+    private final ExecutorService executorService;
+    // 工具执行结果缓存
+    private final Map<String, SkillExecution> executionCache;
+    // 缓存过期时间（毫秒）
+    private static final long CACHE_EXPIRY = 5 * 60 * 1000;
+    // 工具调用计数器（用于速率限制）
+    private final Map<String, AtomicInteger> toolCallCounters;
+    // 速率限制（每分钟调用次数）
+    private static final int RATE_LIMIT_PER_MINUTE = 60;
+    
     private final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+    
+    public ToolAdapterServiceImpl() {
+        // 初始化线程池
+        this.executorService = Executors.newFixedThreadPool(10, new ThreadFactory() {
+            private final AtomicInteger counter = new AtomicInteger(0);
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "tool-executor-" + counter.incrementAndGet());
+            }
+        });
+        
+        // 初始化缓存
+        this.executionCache = new ConcurrentHashMap<>();
+        // 初始化调用计数器
+        this.toolCallCounters = new ConcurrentHashMap<>();
+        
+        // 启动缓存清理任务
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(this::cleanupCache, 5, 5, TimeUnit.MINUTES);
+        
+        // 启动速率限制重置任务
+        scheduler.scheduleAtFixedRate(this::resetRateLimits, 1, 1, TimeUnit.MINUTES);
+    }
+    
+    /**
+     * 清理过期缓存
+     */
+    private void cleanupCache() {
+        long now = System.currentTimeMillis();
+        List<String> toRemove = new ArrayList<>();
+        for (Map.Entry<String, SkillExecution> entry : executionCache.entrySet()) {
+            SkillExecution execution = entry.getValue();
+            if (execution.getEndTime() != null && now - execution.getEndTime().toEpochSecond(java.time.ZoneOffset.UTC) * 1000 > CACHE_EXPIRY) {
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (String key : toRemove) {
+            executionCache.remove(key);
+        }
+        log.info("Cleaned up {} expired cache entries", toRemove.size());
+    }
+    
+    /**
+     * 重置速率限制计数器
+     */
+    private void resetRateLimits() {
+        toolCallCounters.clear();
+        log.info("Reset rate limit counters");
+    }
+    
+    /**
+     * 检查速率限制
+     * @param toolName 工具名称
+     * @return 是否允许调用
+     */
+    private boolean checkRateLimit(String toolName) {
+        AtomicInteger counter = toolCallCounters.computeIfAbsent(toolName, k -> new AtomicInteger(0));
+        int current = counter.incrementAndGet();
+        if (current > RATE_LIMIT_PER_MINUTE) {
+            log.warn("Rate limit exceeded for tool: {}", toolName);
+            return false;
+        }
+        return true;
+    }
     
     /**
      * 注册工具为Skill
@@ -41,6 +130,7 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
         String type = (String) toolDefinition.get("type");
         String endpoint = (String) toolDefinition.get("endpoint");
         boolean enabled = (Boolean) toolDefinition.getOrDefault("enabled", true);
+        String version = (String) toolDefinition.getOrDefault("version", DEFAULT_VERSION);
         
         if (!enabled) {
             log.info("Tool {} is disabled, skipping registration", name);
@@ -49,7 +139,7 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
         
         Skill skill = new Skill();
         skill.setName(name);
-        skill.setVersion("1.0");
+        skill.setVersion(version);
         skill.setDescription(description);
         skill.setType(type);
         skill.setStatus("ACTIVE");
@@ -86,9 +176,9 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
         
         // 注册Skill
         Skill registeredSkill = skillService.registerSkill(skill);
-        tools.put(name, registeredSkill);
+        toolsByVersion.computeIfAbsent(version, k -> new HashMap<>()).put(name, registeredSkill);
         
-        log.info("Registered tool as skill: {} - {}", name, description);
+        log.info("Registered tool as skill: {} v{} - {}", name, version, description);
         return registeredSkill;
     }
     
@@ -97,20 +187,41 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
      */
     @Override
     public void unregisterTool(String toolName) {
-        Skill skill = tools.get(toolName);
-        if (skill != null) {
-            skillService.unregisterSkill(skill.getId());
-            tools.remove(toolName);
-            log.info("Unregistered tool: {}", toolName);
+        unregisterTool(toolName, DEFAULT_VERSION);
+    }
+    
+    /**
+     * 注销指定版本的工具
+     */
+    public void unregisterTool(String toolName, String version) {
+        Map<String, Skill> versionMap = toolsByVersion.get(version);
+        if (versionMap != null) {
+            Skill skill = versionMap.get(toolName);
+            if (skill != null) {
+                skillService.unregisterSkill(skill.getId());
+                versionMap.remove(toolName);
+                log.info("Unregistered tool: {} v{}", toolName, version);
+            }
         }
     }
     
     /**
-     * 获取工具对应的Skill
+     * 获取工具对应的Skill（默认版本）
      */
     @Override
     public Skill getToolByName(String toolName) {
-        return tools.get(toolName);
+        return getToolByName(toolName, DEFAULT_VERSION);
+    }
+    
+    /**
+     * 获取指定版本的工具
+     */
+    public Skill getToolByName(String toolName, String version) {
+        Map<String, Skill> versionMap = toolsByVersion.get(version);
+        if (versionMap != null) {
+            return versionMap.get(toolName);
+        }
+        return null;
     }
     
     /**
@@ -118,7 +229,11 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
      */
     @Override
     public List<Skill> getAllTools() {
-        return new ArrayList<>(tools.values());
+        List<Skill> allTools = new ArrayList<>();
+        for (Map<String, Skill> versionMap : toolsByVersion.values()) {
+            allTools.addAll(versionMap.values());
+        }
+        return allTools;
     }
     
     /**
@@ -126,12 +241,129 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
      */
     @Override
     public SkillExecution executeTool(String toolName, Map<String, Object> parameters) {
-        Skill skill = tools.get(toolName);
+        return executeTool(toolName, DEFAULT_VERSION, parameters);
+    }
+    
+    /**
+     * 执行指定版本的工具
+     */
+    public SkillExecution executeTool(String toolName, String version, Map<String, Object> parameters) {
+        // 检查速率限制
+        if (!checkRateLimit(toolName)) {
+            SkillExecution execution = new SkillExecution();
+            execution.setStatus("ERROR");
+            execution.setErrorMessage("Rate limit exceeded");
+            execution.setEndTime(java.time.LocalDateTime.now());
+            return execution;
+        }
+        
+        // 生成缓存键
+        String cacheKey = generateCacheKey(toolName, version, parameters);
+        
+        // 检查缓存
+        if (executionCache.containsKey(cacheKey)) {
+            log.info("Using cached result for tool: {}", toolName);
+            return executionCache.get(cacheKey);
+        }
+        
+        // 获取工具
+        Skill skill = getToolByName(toolName, version);
         if (skill == null) {
             throw new IllegalArgumentException("Tool not found: " + toolName);
         }
         
-        return skillService.executeSkill(skill.getId(), parameters);
+        // 执行工具（带超时和重试）
+        SkillExecution execution = executeWithRetry(skill, parameters);
+        
+        // 缓存结果
+        if (execution != null && "SUCCESS".equals(execution.getStatus())) {
+            executionCache.put(cacheKey, execution);
+        }
+        
+        return execution;
+    }
+    
+    /**
+     * 带重试的工具执行
+     */
+    private SkillExecution executeWithRetry(Skill skill, Map<String, Object> parameters) {
+        int retries = 0;
+        while (retries <= maxRetries) {
+            try {
+                // 执行工具（带超时）
+                Future<SkillExecution> future = executorService.submit(() -> 
+                        skillService.executeSkill(skill.getId(), parameters)
+                );
+                
+                // 等待执行完成，设置超时
+                return future.get(executionTimeout, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                log.warn("Tool execution timed out: {}", skill.getName());
+                retries++;
+                if (retries <= maxRetries) {
+                    log.info("Retrying tool execution: {} ({} of {})", skill.getName(), retries, maxRetries);
+                    try {
+                        Thread.sleep(retryDelay);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error executing tool: {}", skill.getName(), e);
+                retries++;
+                if (retries <= maxRetries) {
+                    log.info("Retrying tool execution: {} ({} of {})", skill.getName(), retries, maxRetries);
+                    try {
+                        Thread.sleep(retryDelay);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+        
+        // 重试失败
+        SkillExecution execution = new SkillExecution();
+        execution.setStatus("ERROR");
+            execution.setErrorMessage("Execution failed after " + maxRetries + " retries");
+            execution.setEndTime(java.time.LocalDateTime.now());
+        return execution;
+    }
+    
+    /**
+     * 生成缓存键
+     */
+    private String generateCacheKey(String toolName, String version, Map<String, Object> parameters) {
+        try {
+            return toolName + "_" + version + "_" + yamlMapper.writeValueAsString(parameters);
+        } catch (IOException e) {
+            return toolName + "_" + version + "_" + System.currentTimeMillis();
+        }
+    }
+    
+    /**
+     * 批量执行工具
+     */
+    public List<SkillExecution> executeBatch(List<Map<String, Object>> tasks) {
+        List<SkillExecution> results = new ArrayList<>();
+        for (Map<String, Object> task : tasks) {
+            String toolName = (String) task.get("toolName");
+            String version = (String) task.getOrDefault("version", DEFAULT_VERSION);
+            Map<String, Object> parameters = (Map<String, Object>) task.getOrDefault("parameters", new HashMap<>());
+            
+            try {
+                SkillExecution execution = executeTool(toolName, version, parameters);
+                results.add(execution);
+            } catch (Exception e) {
+                log.error("Error executing batch task for tool: {}", toolName, e);
+                SkillExecution execution = new SkillExecution();
+                execution.setStatus("ERROR");
+                execution.setErrorMessage("Execution failed: " + e.getMessage());
+                execution.setEndTime(java.time.LocalDateTime.now());
+                results.add(execution);
+            }
+        }
+        return results;
     }
     
     /**
@@ -257,7 +489,31 @@ public class ToolAdapterServiceImpl implements ToolAdapterService {
                 "enabled", true
         ));
         
-        log.info("Loaded default tools: {}", tools.keySet());
-        return tools.size();
+        // 添加搜索工具
+        registerTool(Map.of(
+                "name", "search",
+                "description", "执行实时搜索，获取最新网络信息",
+                "type", "java",
+                "endpoint", "http://localhost:8080/api/tools/search",
+                "enabled", true
+        ));
+        
+        log.info("Loaded default tools: {}", getAllTools().stream().map(Skill::getName).toList());
+        return getAllTools().size();
+    }
+    
+    /**
+     * 关闭资源
+     */
+    public void shutdown() {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -1,42 +1,42 @@
 package decision
 
 import (
-	"context"
+	"fmt"
 	"log"
 	"time"
 
-	"github.com/sashabaranov/go-openai"
+	"github.com/skyeai/jarvis-proactive/pkg/cache"
+	"github.com/skyeai/jarvis-proactive/pkg/llm"
 	"github.com/skyeai/jarvis-proactive/pkg/skeleton"
 )
 
 // DecisionService 决策服务
+
 type DecisionService struct {
-	client         *openai.Client
-	model          string
-	temperature    float32
-	maxTokens      int
-	messageBus     *skeleton.MessageBus
-	enabled        bool
-	subscribeChan  chan skeleton.Message
+	llmClient          *llm.LLMClient
+	redisClient        *cache.RedisClient
+	model              string
+	temperature        float32
+	maxTokens          int
+	messageBus         *skeleton.MessageBus
+	enabled            bool
+	subscribeChan      chan skeleton.Message
+	maxIntervalMinutes int // 最大交互间隔（分钟）
 }
 
 // NewDecisionService 创建决策服务实例
-func NewDecisionService(apiKey, baseURL, model string, temperature float32, maxTokens int, messageBus *skeleton.MessageBus, enabled bool) *DecisionService {
-	config := openai.DefaultConfig(apiKey)
-	if baseURL != "" {
-		config.BaseURL = baseURL
-	}
 
-	client := openai.NewClientWithConfig(config)
-
+func NewDecisionService(llmClient *llm.LLMClient, redisClient *cache.RedisClient, model string, temperature float32, maxTokens int, messageBus *skeleton.MessageBus, enabled bool, maxIntervalMinutes int) *DecisionService {
 	return &DecisionService{
-		client:         client,
-		model:          model,
-		temperature:    temperature,
-		maxTokens:      maxTokens,
-		messageBus:     messageBus,
-		enabled:        enabled,
-		subscribeChan:  nil,
+		llmClient:          llmClient,
+		redisClient:        redisClient,
+		model:              model,
+		temperature:        temperature,
+		maxTokens:          maxTokens,
+		messageBus:         messageBus,
+		enabled:            enabled,
+		subscribeChan:      nil,
+		maxIntervalMinutes: maxIntervalMinutes,
 	}
 }
 
@@ -107,10 +107,10 @@ func (ds *DecisionService) handleMessage(message skeleton.Message) {
 		Source:    "decision",
 		Timestamp: time.Now(),
 		Data: map[string]interface{}{
-			"event_type":   eventType,
-			"file_path":    filePath,
-			"decision":     decision,
-			"timestamp":    time.Now(),
+			"event_type": eventType,
+			"file_path":  filePath,
+			"decision":   decision,
+			"timestamp":  time.Now(),
 		},
 	}
 
@@ -119,15 +119,55 @@ func (ds *DecisionService) handleMessage(message skeleton.Message) {
 }
 
 // makeDecision 做出决策
+
 func (ds *DecisionService) makeDecision(eventType, filePath string) string {
-	// 构建决策提示
+	// 构建缓存键
+	cacheKey := fmt.Sprintf("decision:%s:%s", eventType, filePath)
+
+	// 1. 检查频率限制
+	if ds.redisClient != nil && ds.redisClient.IsConnected() {
+		allowed, err := ds.redisClient.CheckDecisionRateLimit(ds.maxIntervalMinutes)
+		if err != nil {
+			log.Printf("Error checking rate limit: %v", err)
+		} else if !allowed {
+			// 超过频率限制，尝试从缓存获取
+			var cachedDecision string
+			err := ds.redisClient.Get(cacheKey, &cachedDecision)
+			if err == nil {
+				log.Printf("Rate limit exceeded, using cached decision: %s", cachedDecision)
+				return cachedDecision
+			}
+			log.Println("Rate limit exceeded, no cached decision available")
+			return "monitor"
+		}
+	}
+
+	// 2. 检查缓存
+	if ds.redisClient != nil && ds.redisClient.IsConnected() {
+		var cachedDecision string
+		err := ds.redisClient.Get(cacheKey, &cachedDecision)
+		if err == nil {
+			log.Printf("Using cached decision: %s", cachedDecision)
+			return cachedDecision
+		}
+	}
+
+	// 3. 构建决策提示
 	prompt := ds.buildDecisionPrompt(eventType, filePath)
 
-	// 调用AI模型
-	response, err := ds.callAI(prompt)
+	// 4. 调用LLM服务
+	response, err := ds.callLLM(prompt)
 	if err != nil {
-		log.Printf("Error calling AI: %v", err)
+		log.Printf("Error calling LLM: %v", err)
 		return "monitor"
+	}
+
+	// 5. 缓存决策结果
+	if ds.redisClient != nil && ds.redisClient.IsConnected() {
+		err := ds.redisClient.Set(cacheKey, response, 10*time.Minute)
+		if err != nil {
+			log.Printf("Error caching decision: %v", err)
+		}
 	}
 
 	return response
@@ -153,26 +193,30 @@ Based on the event type and file path, what is the most appropriate decision?
 Please respond with only the decision keyword (e.g., "monitor", "analyze", etc.).`
 }
 
-// callAI 调用AI模型
-func (ds *DecisionService) callAI(prompt string) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+// callLLM 调用LLM服务
 
-	resp, err := ds.client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{
-		Model:     ds.model,
+func (ds *DecisionService) callLLM(prompt string) (string, error) {
+	if ds.llmClient == nil || !ds.llmClient.IsConnected() {
+		return "", fmt.Errorf("llm client not connected")
+	}
+
+	// 构建LLM请求
+	request := llm.GenerateRequest{
+		Prompt:      prompt,
+		Model:       ds.model,
 		Temperature: ds.temperature,
 		MaxTokens:   ds.maxTokens,
-		Messages: []openai.ChatCompletionMessage{
-			{
-				Role:    openai.ChatMessageRoleUser,
-				Content: prompt,
-			},
-		},
-	})
+	}
 
+	// 调用LLM服务
+	response, err := ds.llmClient.Generate(request)
 	if err != nil {
 		return "", err
 	}
 
-	return resp.Choices[0].Message.Content, nil
+	if response.Error != "" {
+		return "", fmt.Errorf("llm service error: %s", response.Error)
+	}
+
+	return response.Text, nil
 }
