@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    database: 0
+
+chat:
+  realtime-data:
+    enabled: true
+    search-threshold: 0.7
+    tool-call-threshold: 0.8
+  session:
+    timeout: 3600
+    max-messages: 100
+
+nacos:
+  discovery:
+    server-addr: localhost:8848
+  config:
+    server-addr: localhost:8848
+
+rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000
