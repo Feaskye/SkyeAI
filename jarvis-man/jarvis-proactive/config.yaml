@@ -1,0 +1,91 @@
+server:
+  port: 8093
+  host: "0.0.0.0"
+
+perception:
+  enabled: true
+  watch_paths:
+    - "~"
+    - "D:\\Documents"
+  file_extensions:
+    - ".txt"
+    - ".md"
+    - ".docx"
+    - ".pdf"
+  poll_interval: 5
+
+decision:
+  enabled: true
+  model: "claude-3-5-sonnet-20240620"
+  temperature: 0.7
+  max_tokens: 1024
+  openai_api_key: "your-api-key-here"
+  openai_base_url: "https://api.openai.com/v1"
+
+execution:
+  enabled: true
+  allowed_commands:
+    - "ls"
+    - "dir"
+    - "echo"
+    - "cat"
+    - "type"
+  max_execution_time: 30
+  working_directory: "."
+
+skeleton:
+  enabled: true
+  message_buffer_size: 100
+  max_workers: 5
+
+grpc:
+  enabled: true
+  port: 9090
+  host: "0.0.0.0"
+
+nacos:
+  enabled: true
+  server_addr: "localhost:8848"
+  namespace_id: ""
+  group: "DEFAULT_GROUP"
+  service_name: "jarvis-proactive"
+  cluster_name: "DEFAULT"
+
+logging:
+  level: "info"
+  file: "log/proactive.log"
+  max_size: 100
+  max_backups: 5
+  max_age: 30
+
+rabbitmq:
+  enabled: true
+  host: "localhost"
+  port: 5672
+  username: "guest"
+  password: "guest"
+  virtual_host: "/"
+  exchange: "jarvis-exchange"
+  exchange_type: "direct"
+  queue_name: "jarvis-queue"
+  routing_key: "jarvis-key"
+
+redis:
+  enabled: true
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+  cache_expiry: 10
+
+llm:
+  enabled: true
+  service_addr: "localhost"
+  grpc_port: 50051
+  api_key: "your-llm-api-key-here"
+  timeout: 30
+
+decision_control:
+  enabled: true
+  max_interval_minutes: 5
+  max_concurrent_requests: 1

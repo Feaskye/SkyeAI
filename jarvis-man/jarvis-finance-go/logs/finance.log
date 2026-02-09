@@ -15022,3 +15022,1410 @@
 2026/02/06 16:28:06 Stock 000858.SZ: price=160.00, volume=8862700, change=0.00%
 2026/02/06 16:28:06 Stock 601318.SH changes detected: [price_change: -10.00% high_volume: 10192200]
 2026/02/06 16:28:06 Stock 601318.SH: price=40.50, volume=10192200, change=-10.00%
+2026/02/06 16:29:06 Executing market monitor task
+2026/02/06 16:29:06 Index 000001.SH: price=2964.00, change=-1.20%, trend=down
+2026/02/06 16:29:06 Index 399001.SZ: price=11856.00, change=-1.20%, trend=down
+2026/02/06 16:29:06 Index 399006.SZ: price=2371.20, change=-1.20%, trend=down
+2026/02/06 16:30:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:30:00 股票列表已缓存到Redis
+2026/02/06 16:30:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:30:00 开始处理股票 600519 的监控结果
+2026/02/06 16:30:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:30:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:30:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:30:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:30:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:30:00 成功处理股票 600519 的监控结果
+2026/02/06 16:30:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:30:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 16:30:03 开始处理股票 000858 的监控结果
+2026/02/06 16:30:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:30:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:30:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:30:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:30:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:30:03 成功处理股票 000858 的监控结果
+2026/02/06 16:30:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:30:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 16:30:06 开始处理股票 000333 的监控结果
+2026/02/06 16:30:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:30:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:30:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:30:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:30:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:30:06 成功处理股票 000333 的监控结果
+2026/02/06 16:30:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:30:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 16:30:09 开始处理股票 601318 的监控结果
+2026/02/06 16:30:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:30:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:30:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:30:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:30:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:30:09 成功处理股票 601318 的监控结果
+2026/02/06 16:30:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:30:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/06 16:30:12 开始处理股票 600036 的监控结果
+2026/02/06 16:30:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:30:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:30:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:30:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:30:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:30:12 成功处理股票 600036 的监控结果
+2026/02/06 16:30:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:30:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/06 16:30:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0877772s
+2026/02/06 16:31:06 Executing stock monitor task
+2026/02/06 16:31:06 Stock 000001.SH changes detected: [high_volume: 18589700]
+2026/02/06 16:31:06 Stock 000001.SH: price=15.00, volume=18589700, change=0.00%
+2026/02/06 16:31:06 Stock 000002.SH: price=12.00, volume=6818100, change=0.00%
+2026/02/06 16:31:06 Stock 600519.SH: price=1800.00, volume=7695300, change=0.00%
+2026/02/06 16:31:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/06 16:31:06 Stock 000858.SZ: price=144.00, volume=8218600, change=-10.00%
+2026/02/06 16:31:06 Stock 601318.SH: price=45.00, volume=8759100, change=0.00%
+2026/02/06 16:31:20 股票列表已缓存到Redis
+2026/02/06 16:31:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:34:06 Executing news crawl task
+2026/02/06 16:34:06 Executing market monitor task
+2026/02/06 16:34:06 Executing stock monitor task
+2026/02/06 16:34:06 Index 000001.SH: price=3036.00, change=1.20%, trend=up
+2026/02/06 16:34:06 Executing sector monitor task
+2026/02/06 16:34:06 Index 399001.SZ: price=12144.00, change=1.20%, trend=up
+2026/02/06 16:34:06 Crawling news from sina: https://finance.sina.com.cn
+2026/02/06 16:34:06 Index 399006.SZ: price=2428.80, change=1.20%, trend=up
+2026/02/06 16:34:06 Hot sectors: []
+2026/02/06 16:34:06 Crawling news from eastmoney: https://www.eastmoney.com
+2026/02/06 16:34:06 Stock 000001.SH changes detected: [high_volume: 19051700]
+2026/02/06 16:34:06 Stock 000001.SH: price=15.00, volume=19051700, change=0.00%
+2026/02/06 16:34:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/06 16:34:06 Sector health: price=1164.00, change=-3.00%
+2026/02/06 16:34:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/06 16:34:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/06 16:34:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/06 16:34:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/06 16:34:06 Sector tech: price=950.00, change=-5.00%
+2026/02/06 16:34:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/06 16:34:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/06 16:34:06 Stock 000002.SH: price=12.00, volume=5719100, change=0.00%
+2026/02/06 16:34:06 Stock 600519.SH: price=1800.00, volume=6256300, change=0.00%
+2026/02/06 16:34:06 Stock 000858.SZ: price=160.00, volume=6774500, change=0.00%
+2026/02/06 16:34:06 Stock 601318.SH: price=45.00, volume=6942700, change=0.00%
+2026/02/06 16:35:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:35:00 股票列表已缓存到Redis
+2026/02/06 16:35:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:35:00 开始处理股票 600519 的监控结果
+2026/02/06 16:35:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:35:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:35:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:35:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:35:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:35:00 成功处理股票 600519 的监控结果
+2026/02/06 16:35:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:35:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/06 16:35:03 开始处理股票 000858 的监控结果
+2026/02/06 16:35:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:35:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:35:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:35:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:35:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:35:03 成功处理股票 000858 的监控结果
+2026/02/06 16:35:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:35:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/06 16:35:06 开始处理股票 000333 的监控结果
+2026/02/06 16:35:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:35:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:35:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:35:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:35:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:35:06 成功处理股票 000333 的监控结果
+2026/02/06 16:35:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:35:09 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/06 16:35:09 开始处理股票 601318 的监控结果
+2026/02/06 16:35:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:35:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:35:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:35:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:35:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:35:09 成功处理股票 601318 的监控结果
+2026/02/06 16:35:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:35:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 16:35:12 开始处理股票 600036 的监控结果
+2026/02/06 16:35:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:35:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:35:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:35:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:35:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:35:12 成功处理股票 600036 的监控结果
+2026/02/06 16:35:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:35:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 16:35:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0798715s
+2026/02/06 16:37:06 Executing stock monitor task
+2026/02/06 16:37:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 19275200]
+2026/02/06 16:37:06 Stock 000001.SH: price=13.50, volume=19275200, change=-10.00%
+2026/02/06 16:37:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:37:06 Stock 000002.SH: price=10.80, volume=6107600, change=-10.00%
+2026/02/06 16:37:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:37:06 Stock 600519.SH: price=1620.00, volume=7187200, change=-10.00%
+2026/02/06 16:37:06 Stock 000858.SZ: price=160.00, volume=7721900, change=0.00%
+2026/02/06 16:37:06 Stock 601318.SH: price=45.00, volume=8770300, change=0.00%
+2026/02/06 16:39:06 Executing market monitor task
+2026/02/06 16:39:06 Index 000001.SH: price=2964.00, change=-1.20%, trend=down
+2026/02/06 16:39:06 Index 399001.SZ: price=11856.00, change=-1.20%, trend=down
+2026/02/06 16:39:06 Index 399006.SZ: price=2371.20, change=-1.20%, trend=down
+2026/02/06 16:40:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:40:00 股票列表已缓存到Redis
+2026/02/06 16:40:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:40:00 开始处理股票 600519 的监控结果
+2026/02/06 16:40:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:40:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:40:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:40:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:40:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:40:00 成功处理股票 600519 的监控结果
+2026/02/06 16:40:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:40:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 16:40:03 开始处理股票 000858 的监控结果
+2026/02/06 16:40:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:40:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:40:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:40:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:40:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:40:03 成功处理股票 000858 的监控结果
+2026/02/06 16:40:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:40:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 16:40:06 开始处理股票 000333 的监控结果
+2026/02/06 16:40:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:40:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:40:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:40:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:40:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:40:06 成功处理股票 000333 的监控结果
+2026/02/06 16:40:06 Executing stock monitor task
+2026/02/06 16:40:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18911400]
+2026/02/06 16:40:06 Stock 000001.SH: price=13.50, volume=18911400, change=-10.00%
+2026/02/06 16:40:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:40:06 Stock 000002.SH: price=10.80, volume=5431800, change=-10.00%
+2026/02/06 16:40:06 Stock 600519.SH: price=1800.00, volume=5958300, change=0.00%
+2026/02/06 16:40:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/06 16:40:06 Stock 000858.SZ: price=144.00, volume=7024200, change=-10.00%
+2026/02/06 16:40:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:40:06 Stock 601318.SH: price=40.50, volume=7601200, change=-10.00%
+2026/02/06 16:40:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:40:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 16:40:09 开始处理股票 601318 的监控结果
+2026/02/06 16:40:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:40:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:40:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:40:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:40:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:40:09 成功处理股票 601318 的监控结果
+2026/02/06 16:40:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:40:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 16:40:12 开始处理股票 600036 的监控结果
+2026/02/06 16:40:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:40:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:40:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:40:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:40:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:40:12 成功处理股票 600036 的监控结果
+2026/02/06 16:40:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:40:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 16:40:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.1018705s
+2026/02/06 16:41:20 股票列表已缓存到Redis
+2026/02/06 16:41:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:43:06 Executing stock monitor task
+2026/02/06 16:43:06 Stock 000001.SH changes detected: [high_volume: 18750500]
+2026/02/06 16:43:06 Stock 000001.SH: price=15.00, volume=18750500, change=0.00%
+2026/02/06 16:43:06 Stock 000002.SH: price=12.00, volume=7125300, change=0.00%
+2026/02/06 16:43:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:43:06 Stock 600519.SH: price=1620.00, volume=7775000, change=-10.00%
+2026/02/06 16:43:06 Stock 000858.SZ: price=160.00, volume=8309300, change=0.00%
+2026/02/06 16:43:06 Stock 601318.SH: price=45.00, volume=8361500, change=0.00%
+2026/02/06 16:44:06 Executing sector monitor task
+2026/02/06 16:44:06 Hot sectors: []
+2026/02/06 16:44:06 Executing market monitor task
+2026/02/06 16:44:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/06 16:44:06 Index 000001.SH: price=3072.00, change=2.40%, trend=strong_up
+2026/02/06 16:44:06 Sector health: price=1164.00, change=-3.00%
+2026/02/06 16:44:06 Alert: Index 000001.SH changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 16:44:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/06 16:44:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/06 16:44:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/06 16:44:06 Index 399001.SZ: price=12288.00, change=2.40%, trend=strong_up
+2026/02/06 16:44:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/06 16:44:06 Alert: Index 399001.SZ changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 16:44:06 Sector tech: price=950.00, change=-5.00%
+2026/02/06 16:44:06 Index 399006.SZ: price=2457.60, change=2.40%, trend=strong_up
+2026/02/06 16:44:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/06 16:44:06 Alert: Index 399006.SZ changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 16:44:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/06 16:45:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:45:00 股票列表已缓存到Redis
+2026/02/06 16:45:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:45:00 开始处理股票 600519 的监控结果
+2026/02/06 16:45:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:45:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:45:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:45:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:45:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:45:00 成功处理股票 600519 的监控结果
+2026/02/06 16:45:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:45:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/06 16:45:03 开始处理股票 000858 的监控结果
+2026/02/06 16:45:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:45:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:45:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:45:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:45:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:45:03 成功处理股票 000858 的监控结果
+2026/02/06 16:45:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:45:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/06 16:45:06 开始处理股票 000333 的监控结果
+2026/02/06 16:45:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:45:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:45:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:45:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:45:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:45:06 成功处理股票 000333 的监控结果
+2026/02/06 16:45:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:45:09 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/06 16:45:09 开始处理股票 601318 的监控结果
+2026/02/06 16:45:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:45:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:45:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:45:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:45:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:45:09 成功处理股票 601318 的监控结果
+2026/02/06 16:45:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:45:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/06 16:45:12 开始处理股票 600036 的监控结果
+2026/02/06 16:45:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:45:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:45:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:45:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:45:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:45:12 成功处理股票 600036 的监控结果
+2026/02/06 16:45:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:45:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/06 16:45:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0749245s
+2026/02/06 16:46:06 Executing stock monitor task
+2026/02/06 16:46:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18499600]
+2026/02/06 16:46:06 Stock 000001.SH: price=13.50, volume=18499600, change=-10.00%
+2026/02/06 16:46:06 Stock 000002.SH: price=12.00, volume=5813100, change=0.00%
+2026/02/06 16:46:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:46:06 Stock 600519.SH: price=1620.00, volume=6545200, change=-10.00%
+2026/02/06 16:46:06 Stock 000858.SZ: price=160.00, volume=6585100, change=0.00%
+2026/02/06 16:46:06 Stock 601318.SH: price=45.00, volume=7106300, change=0.00%
+2026/02/06 16:49:06 Executing market monitor task
+2026/02/06 16:49:06 Executing stock monitor task
+2026/02/06 16:49:06 Index 000001.SH: price=2910.00, change=-3.00%, trend=strong_down
+2026/02/06 16:49:06 Alert: Index 000001.SH changed by -3.00%, exceeding threshold of 2.00%
+2026/02/06 16:49:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18462000]
+2026/02/06 16:49:06 Stock 000001.SH: price=13.50, volume=18462000, change=-10.00%
+2026/02/06 16:49:06 Index 399001.SZ: price=11640.00, change=-3.00%, trend=strong_down
+2026/02/06 16:49:06 Alert: Index 399001.SZ changed by -3.00%, exceeding threshold of 2.00%
+2026/02/06 16:49:06 Index 399006.SZ: price=2328.00, change=-3.00%, trend=strong_down
+2026/02/06 16:49:06 Alert: Index 399006.SZ changed by -3.00%, exceeding threshold of 2.00%
+2026/02/06 16:49:06 Stock 000002.SH: price=12.00, volume=5307900, change=0.00%
+2026/02/06 16:49:06 Stock 600519.SH: price=1800.00, volume=5850700, change=0.00%
+2026/02/06 16:49:06 Stock 000858.SZ: price=160.00, volume=6403700, change=0.00%
+2026/02/06 16:49:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:49:06 Stock 601318.SH: price=40.50, volume=6435600, change=-10.00%
+2026/02/06 16:50:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:50:00 股票列表已缓存到Redis
+2026/02/06 16:50:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:50:00 开始处理股票 600519 的监控结果
+2026/02/06 16:50:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:50:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:50:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:50:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:50:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:50:00 成功处理股票 600519 的监控结果
+2026/02/06 16:50:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:50:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 16:50:03 开始处理股票 000858 的监控结果
+2026/02/06 16:50:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:50:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:50:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:50:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:50:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:50:03 成功处理股票 000858 的监控结果
+2026/02/06 16:50:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:50:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 16:50:06 开始处理股票 000333 的监控结果
+2026/02/06 16:50:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:50:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:50:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:50:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:50:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:50:06 成功处理股票 000333 的监控结果
+2026/02/06 16:50:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:50:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 16:50:09 开始处理股票 601318 的监控结果
+2026/02/06 16:50:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:50:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:50:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:50:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:50:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:50:09 成功处理股票 601318 的监控结果
+2026/02/06 16:50:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:50:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 16:50:12 开始处理股票 600036 的监控结果
+2026/02/06 16:50:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:50:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:50:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:50:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:50:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:50:12 成功处理股票 600036 的监控结果
+2026/02/06 16:50:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:50:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 16:50:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0826379s
+2026/02/06 16:51:20 股票列表已缓存到Redis
+2026/02/06 16:51:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:52:06 Executing stock monitor task
+2026/02/06 16:52:06 Stock 000001.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:52:06 Stock 000001.SH: price=13.50, volume=8195000, change=-10.00%
+2026/02/06 16:52:06 Stock 000002.SH changes detected: [price_change: -10.00% high_volume: 19110800]
+2026/02/06 16:52:06 Stock 000002.SH: price=10.80, volume=19110800, change=-10.00%
+2026/02/06 16:52:06 Stock 600519.SH changes detected: [high_volume: 18714900]
+2026/02/06 16:52:06 Stock 600519.SH: price=1800.00, volume=18714900, change=0.00%
+2026/02/06 16:52:06 Stock 000858.SZ changes detected: [price_change: -10.00% high_volume: 14900400]
+2026/02/06 16:52:06 Stock 000858.SZ: price=144.00, volume=14900400, change=-10.00%
+2026/02/06 16:52:06 Stock 601318.SH changes detected: [high_volume: 17994500]
+2026/02/06 16:52:06 Stock 601318.SH: price=45.00, volume=17994500, change=0.00%
+2026/02/06 16:54:06 Executing market monitor task
+2026/02/06 16:54:06 Executing sector monitor task
+2026/02/06 16:54:06 Hot sectors: []
+2026/02/06 16:54:06 Index 000001.SH: price=3000.00, change=0.00%, trend=stable
+2026/02/06 16:54:06 Index 399001.SZ: price=12000.00, change=0.00%, trend=stable
+2026/02/06 16:54:06 Index 399006.SZ: price=2400.00, change=0.00%, trend=stable
+2026/02/06 16:54:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/06 16:54:06 Sector health: price=1164.00, change=-3.00%
+2026/02/06 16:54:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/06 16:54:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/06 16:54:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/06 16:54:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/06 16:54:06 Sector tech: price=950.00, change=-5.00%
+2026/02/06 16:54:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/06 16:54:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/06 16:55:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 16:55:00 股票列表已缓存到Redis
+2026/02/06 16:55:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 16:55:00 开始处理股票 600519 的监控结果
+2026/02/06 16:55:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:55:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:55:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:55:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:55:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 16:55:00 成功处理股票 600519 的监控结果
+2026/02/06 16:55:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:55:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 16:55:03 开始处理股票 000858 的监控结果
+2026/02/06 16:55:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:55:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:55:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:55:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:55:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 16:55:03 成功处理股票 000858 的监控结果
+2026/02/06 16:55:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:55:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 16:55:06 开始处理股票 000333 的监控结果
+2026/02/06 16:55:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:55:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:55:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:55:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:55:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 16:55:06 成功处理股票 000333 的监控结果
+2026/02/06 16:55:06 Executing stock monitor task
+2026/02/06 16:55:06 Stock 000001.SH changes detected: [high_volume: 18391300]
+2026/02/06 16:55:06 Stock 000001.SH: price=15.00, volume=18391300, change=0.00%
+2026/02/06 16:55:06 Stock 000002.SH: price=12.00, volume=5590100, change=0.00%
+2026/02/06 16:55:06 Stock 600519.SH: price=1800.00, volume=6140700, change=0.00%
+2026/02/06 16:55:06 Stock 000858.SZ: price=160.00, volume=6662300, change=0.00%
+2026/02/06 16:55:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:55:06 Stock 601318.SH: price=40.50, volume=7659000, change=-10.00%
+2026/02/06 16:55:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:55:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 16:55:09 开始处理股票 601318 的监控结果
+2026/02/06 16:55:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:55:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:55:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:55:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:55:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 16:55:09 成功处理股票 601318 的监控结果
+2026/02/06 16:55:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:55:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 16:55:12 开始处理股票 600036 的监控结果
+2026/02/06 16:55:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 16:55:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 16:55:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 16:55:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 16:55:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 16:55:12 成功处理股票 600036 的监控结果
+2026/02/06 16:55:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 16:55:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 16:55:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0922846s
+2026/02/06 16:58:06 Executing stock monitor task
+2026/02/06 16:58:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18419000]
+2026/02/06 16:58:06 Stock 000001.SH: price=13.50, volume=18419000, change=-10.00%
+2026/02/06 16:58:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:58:06 Stock 000002.SH: price=10.80, volume=7227600, change=-10.00%
+2026/02/06 16:58:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 16:58:06 Stock 600519.SH: price=1620.00, volume=8220600, change=-10.00%
+2026/02/06 16:58:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/06 16:58:06 Stock 000858.SZ: price=144.00, volume=9810800, change=-10.00%
+2026/02/06 16:58:06 Stock 601318.SH changes detected: [price_change: -10.00% high_volume: 11038600]
+2026/02/06 16:58:06 Stock 601318.SH: price=40.50, volume=11038600, change=-10.00%
+2026/02/06 16:59:06 Executing market monitor task
+2026/02/06 16:59:06 Index 000001.SH: price=3036.00, change=1.20%, trend=up
+2026/02/06 16:59:06 Index 399001.SZ: price=12144.00, change=1.20%, trend=up
+2026/02/06 16:59:06 Index 399006.SZ: price=2428.80, change=1.20%, trend=up
+2026/02/06 17:00:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 17:00:00 股票列表已缓存到Redis
+2026/02/06 17:00:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:00:00 开始处理股票 600519 的监控结果
+2026/02/06 17:00:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:00:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:00:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:00:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:00:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 17:00:00 成功处理股票 600519 的监控结果
+2026/02/06 17:00:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:00:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/06 17:00:03 开始处理股票 000858 的监控结果
+2026/02/06 17:00:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:00:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:00:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:00:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:00:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 17:00:03 成功处理股票 000858 的监控结果
+2026/02/06 17:00:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:00:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/06 17:00:06 开始处理股票 000333 的监控结果
+2026/02/06 17:00:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:00:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:00:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:00:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:00:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 17:00:06 成功处理股票 000333 的监控结果
+2026/02/06 17:00:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:00:09 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/06 17:00:09 开始处理股票 601318 的监控结果
+2026/02/06 17:00:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:00:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:00:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:00:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:00:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 17:00:09 成功处理股票 601318 的监控结果
+2026/02/06 17:00:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:00:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/06 17:00:12 开始处理股票 600036 的监控结果
+2026/02/06 17:00:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:00:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:00:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:00:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:00:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 17:00:12 成功处理股票 600036 的监控结果
+2026/02/06 17:00:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:00:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/06 17:00:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0740259s
+2026/02/06 17:01:06 Executing stock monitor task
+2026/02/06 17:01:06 Stock 000001.SH changes detected: [high_volume: 18515100]
+2026/02/06 17:01:06 Stock 000001.SH: price=15.00, volume=18515100, change=0.00%
+2026/02/06 17:01:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:01:06 Stock 000002.SH: price=10.80, volume=6647600, change=-10.00%
+2026/02/06 17:01:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:01:06 Stock 600519.SH: price=1620.00, volume=6647600, change=-10.00%
+2026/02/06 17:01:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/06 17:01:06 Stock 000858.SZ: price=144.00, volume=7336000, change=-10.00%
+2026/02/06 17:01:06 Stock 601318.SH: price=45.00, volume=7858900, change=0.00%
+2026/02/06 17:01:20 股票列表已缓存到Redis
+2026/02/06 17:01:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:04:06 Executing sector monitor task
+2026/02/06 17:04:06 Executing market monitor task
+2026/02/06 17:04:06 Executing news crawl task
+2026/02/06 17:04:06 Executing stock monitor task
+2026/02/06 17:04:06 Hot sectors: []
+2026/02/06 17:04:06 Stock 000001.SH changes detected: [high_volume: 18401500]
+2026/02/06 17:04:06 Index 000001.SH: price=3000.00, change=0.00%, trend=stable
+2026/02/06 17:04:06 Index 399001.SZ: price=12000.00, change=0.00%, trend=stable
+2026/02/06 17:04:06 Index 399006.SZ: price=2400.00, change=0.00%, trend=stable
+2026/02/06 17:04:06 Stock 000001.SH: price=15.00, volume=18401500, change=0.00%
+2026/02/06 17:04:06 Executing strategy backtest task
+2026/02/06 17:04:06 Crawling news from sina: https://finance.sina.com.cn
+2026/02/06 17:04:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/06 17:04:06 Crawling news from eastmoney: https://www.eastmoney.com
+2026/02/06 17:04:06 Sector health: price=1164.00, change=-3.00%
+2026/02/06 17:04:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/06 17:04:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/06 17:04:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/06 17:04:06 Backtest result for MACD on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/06 17:04:06 Sector tech: price=950.00, change=-5.00%
+2026/02/06 17:04:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/06 17:04:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000001.SH:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for KDJ on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:04:06 Stock 000002.SH: price=10.80, volume=6563800, change=-10.00%
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000001.SH:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:04:06 Backtest result for RSI on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Stock 600519.SH: price=1620.00, volume=6563800, change=-10.00%
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000001.SH:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for BOLL on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Stock 000858.SZ: price=160.00, volume=7642500, change=0.00%
+2026/02/06 17:04:06 Stock 601318.SH: price=45.00, volume=8167500, change=0.00%
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000001.SH:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for MACD on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000002.SH:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for KDJ on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000002.SH:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for RSI on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000002.SH:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for BOLL on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000002.SH:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for MACD on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:600519.SH:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for KDJ on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:600519.SH:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for RSI on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:600519.SH:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for BOLL on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:600519.SH:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for MACD on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for KDJ on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for RSI on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for BOLL on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for MACD on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:601318.SH:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for KDJ on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:601318.SH:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for RSI on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:601318.SH:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:04:06 Backtest result for BOLL on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/06 17:04:06 Backtest result saved to Redis: key=backtest:601318.SH:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 17:05:00 股票列表已缓存到Redis
+2026/02/06 17:05:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:05:00 开始处理股票 600519 的监控结果
+2026/02/06 17:05:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:05:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:05:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:05:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 17:05:00 成功处理股票 600519 的监控结果
+2026/02/06 17:05:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:05:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 17:05:03 开始处理股票 000858 的监控结果
+2026/02/06 17:05:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:05:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:05:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:05:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 17:05:03 成功处理股票 000858 的监控结果
+2026/02/06 17:05:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:05:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 17:05:06 开始处理股票 000333 的监控结果
+2026/02/06 17:05:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:05:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:05:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:05:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 17:05:06 成功处理股票 000333 的监控结果
+2026/02/06 17:05:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:05:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 17:05:09 开始处理股票 601318 的监控结果
+2026/02/06 17:05:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:05:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:05:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:05:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 17:05:09 成功处理股票 601318 的监控结果
+2026/02/06 17:05:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:05:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 17:05:12 开始处理股票 600036 的监控结果
+2026/02/06 17:05:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:05:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:05:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:05:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:05:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 17:05:12 成功处理股票 600036 的监控结果
+2026/02/06 17:05:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:05:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 17:05:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0845609s
+2026/02/06 17:07:06 Executing stock monitor task
+2026/02/06 17:07:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18675000]
+2026/02/06 17:07:06 Stock 000001.SH: price=13.50, volume=18675000, change=-10.00%
+2026/02/06 17:07:06 Stock 000002.SH: price=12.00, volume=5646100, change=0.00%
+2026/02/06 17:07:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:07:06 Stock 600519.SH: price=1620.00, volume=6246800, change=-10.00%
+2026/02/06 17:07:06 Stock 000858.SZ: price=160.00, volume=6804100, change=0.00%
+2026/02/06 17:07:06 Stock 601318.SH: price=45.00, volume=7325500, change=0.00%
+2026/02/06 17:09:06 Executing market monitor task
+2026/02/06 17:09:06 Index 000001.SH: price=3072.00, change=2.40%, trend=strong_up
+2026/02/06 17:09:06 Alert: Index 000001.SH changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 17:09:06 Index 399001.SZ: price=12288.00, change=2.40%, trend=strong_up
+2026/02/06 17:09:06 Alert: Index 399001.SZ changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 17:09:06 Index 399006.SZ: price=2457.60, change=2.40%, trend=strong_up
+2026/02/06 17:09:06 Alert: Index 399006.SZ changed by 2.40%, exceeding threshold of 2.00%
+2026/02/06 17:10:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 17:10:00 股票列表已缓存到Redis
+2026/02/06 17:10:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:10:00 开始处理股票 600519 的监控结果
+2026/02/06 17:10:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:10:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:10:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:10:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:10:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 17:10:00 成功处理股票 600519 的监控结果
+2026/02/06 17:10:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:10:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 17:10:03 开始处理股票 000858 的监控结果
+2026/02/06 17:10:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:10:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:10:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:10:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:10:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 17:10:03 成功处理股票 000858 的监控结果
+2026/02/06 17:10:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:10:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/06 17:10:06 开始处理股票 000333 的监控结果
+2026/02/06 17:10:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:10:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:10:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:10:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:10:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 17:10:06 成功处理股票 000333 的监控结果
+2026/02/06 17:10:06 Executing stock monitor task
+2026/02/06 17:10:06 Stock 000001.SH changes detected: [high_volume: 18478100]
+2026/02/06 17:10:06 Stock 000001.SH: price=15.00, volume=18478100, change=0.00%
+2026/02/06 17:10:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:10:06 Stock 000002.SH: price=10.80, volume=5231000, change=-10.00%
+2026/02/06 17:10:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:10:06 Stock 600519.SH: price=1620.00, volume=5763600, change=-10.00%
+2026/02/06 17:10:06 Stock 000858.SZ: price=160.00, volume=6297900, change=0.00%
+2026/02/06 17:10:06 Stock 601318.SH: price=45.00, volume=7466700, change=0.00%
+2026/02/06 17:10:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:10:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 17:10:09 开始处理股票 601318 的监控结果
+2026/02/06 17:10:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:10:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:10:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:10:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:10:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 17:10:09 成功处理股票 601318 的监控结果
+2026/02/06 17:10:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:10:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 17:10:12 开始处理股票 600036 的监控结果
+2026/02/06 17:10:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:10:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:10:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:10:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:10:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 17:10:12 成功处理股票 600036 的监控结果
+2026/02/06 17:10:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:10:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 17:10:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0903483s
+2026/02/06 17:11:20 股票列表已缓存到Redis
+2026/02/06 17:11:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:13:06 Executing stock monitor task
+2026/02/06 17:13:06 Stock 000001.SH changes detected: [high_volume: 18893100]
+2026/02/06 17:13:06 Stock 000001.SH: price=15.00, volume=18893100, change=0.00%
+2026/02/06 17:13:06 Stock 000002.SH: price=12.00, volume=6669900, change=0.00%
+2026/02/06 17:13:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:13:06 Stock 600519.SH: price=1620.00, volume=7214600, change=-10.00%
+2026/02/06 17:13:06 Stock 000858.SZ: price=160.00, volume=7408100, change=0.00%
+2026/02/06 17:13:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:13:06 Stock 601318.SH: price=40.50, volume=7931800, change=-10.00%
+2026/02/06 17:14:06 Executing market monitor task
+2026/02/06 17:14:06 Executing sector monitor task
+2026/02/06 17:14:06 Index 000001.SH: price=2982.00, change=-0.60%, trend=down
+2026/02/06 17:14:06 Index 399001.SZ: price=11928.00, change=-0.60%, trend=down
+2026/02/06 17:14:06 Hot sectors: []
+2026/02/06 17:14:06 Index 399006.SZ: price=2385.60, change=-0.60%, trend=down
+2026/02/06 17:14:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/06 17:14:06 Sector health: price=1164.00, change=-3.00%
+2026/02/06 17:14:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/06 17:14:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/06 17:14:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/06 17:14:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/06 17:14:06 Sector tech: price=950.00, change=-5.00%
+2026/02/06 17:14:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/06 17:14:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/06 17:15:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 17:15:00 股票列表已缓存到Redis
+2026/02/06 17:15:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:15:00 开始处理股票 600519 的监控结果
+2026/02/06 17:15:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:15:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:15:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:15:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:15:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 17:15:00 成功处理股票 600519 的监控结果
+2026/02/06 17:15:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:15:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/06 17:15:03 开始处理股票 000858 的监控结果
+2026/02/06 17:15:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:15:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:15:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:15:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:15:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 17:15:03 成功处理股票 000858 的监控结果
+2026/02/06 17:15:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:15:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 17:15:06 开始处理股票 000333 的监控结果
+2026/02/06 17:15:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:15:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:15:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:15:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:15:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 17:15:06 成功处理股票 000333 的监控结果
+2026/02/06 17:15:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:15:09 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/06 17:15:09 开始处理股票 601318 的监控结果
+2026/02/06 17:15:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:15:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:15:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:15:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:15:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 17:15:09 成功处理股票 601318 的监控结果
+2026/02/06 17:15:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:15:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/06 17:15:12 开始处理股票 600036 的监控结果
+2026/02/06 17:15:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:15:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:15:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:15:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:15:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 17:15:12 成功处理股票 600036 的监控结果
+2026/02/06 17:15:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:15:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/06 17:15:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.0702444s
+2026/02/06 17:16:06 Executing stock monitor task
+2026/02/06 17:16:06 Stock 000001.SH changes detected: [high_volume: 18570900]
+2026/02/06 17:16:06 Stock 000001.SH: price=15.00, volume=18570900, change=0.00%
+2026/02/06 17:16:06 Stock 000002.SH: price=12.00, volume=5600900, change=0.00%
+2026/02/06 17:16:06 Stock 600519.SH: price=1800.00, volume=5600900, change=0.00%
+2026/02/06 17:16:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/06 17:16:06 Stock 000858.SZ: price=144.00, volume=6601400, change=-10.00%
+2026/02/06 17:16:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:16:06 Stock 601318.SH: price=40.50, volume=6601400, change=-10.00%
+2026/02/06 17:19:06 Executing stock monitor task
+2026/02/06 17:19:06 Executing market monitor task
+2026/02/06 17:19:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18462200]
+2026/02/06 17:19:06 Stock 000001.SH: price=13.50, volume=18462200, change=-10.00%
+2026/02/06 17:19:06 Index 000001.SH: price=2946.00, change=-1.80%, trend=strong_down
+2026/02/06 17:19:06 Index 399001.SZ: price=11856.00, change=-1.20%, trend=down
+2026/02/06 17:19:06 Index 399006.SZ: price=2371.20, change=-1.20%, trend=down
+2026/02/06 17:19:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:19:06 Stock 000002.SH: price=10.80, volume=5713000, change=-10.00%
+2026/02/06 17:19:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:19:06 Stock 600519.SH: price=1620.00, volume=6238000, change=-10.00%
+2026/02/06 17:19:06 Stock 000858.SZ: price=160.00, volume=6781500, change=0.00%
+2026/02/06 17:19:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/06 17:19:06 Stock 601318.SH: price=40.50, volume=7873400, change=-10.00%
+2026/02/06 17:20:00 开始执行任务: CoreStockMonitoringTask
+2026/02/06 17:20:00 股票列表已缓存到Redis
+2026/02/06 17:20:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/06 17:20:00 开始处理股票 600519 的监控结果
+2026/02/06 17:20:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:20:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:20:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:20:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:20:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/06 17:20:00 成功处理股票 600519 的监控结果
+2026/02/06 17:20:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:20:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/06 17:20:03 开始处理股票 000858 的监控结果
+2026/02/06 17:20:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:20:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:20:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:20:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:20:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/06 17:20:03 成功处理股票 000858 的监控结果
+2026/02/06 17:20:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:20:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/06 17:20:06 开始处理股票 000333 的监控结果
+2026/02/06 17:20:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:20:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:20:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:20:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:20:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/06 17:20:06 成功处理股票 000333 的监控结果
+2026/02/06 17:20:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:20:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/06 17:20:09 开始处理股票 601318 的监控结果
+2026/02/06 17:20:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:20:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:20:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:20:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:20:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/06 17:20:09 成功处理股票 601318 的监控结果
+2026/02/06 17:20:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:20:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/06 17:20:12 开始处理股票 600036 的监控结果
+2026/02/06 17:20:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260206, expiry=120h0m0s
+2026/02/06 17:20:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260206, expiry=120h0m0s
+2026/02/06 17:20:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260206, expiry=120h0m0s
+2026/02/06 17:20:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260206, expiry=120h0m0s
+2026/02/06 17:20:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/06 17:20:12 成功处理股票 600036 的监控结果
+2026/02/06 17:20:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/06 17:20:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/06 17:20:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.1014255s
+2026/02/06 17:21:20 股票列表已缓存到Redis
+2026/02/06 17:21:20 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 08:56:41 Executing news crawl task
+2026/02/09 08:56:41 Crawling news from sina: https://finance.sina.com.cn
+2026/02/09 08:56:41 Crawling news from eastmoney: https://www.eastmoney.com
+2026/02/09 08:56:41 Executing sector monitor task
+2026/02/09 08:56:41 Hot sectors: []
+2026/02/09 08:56:41 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/09 08:56:41 Sector health: price=1164.00, change=-3.00%
+2026/02/09 08:56:41 Sector industry: price=1455.00, change=-3.00%
+2026/02/09 08:56:41 Sector finance: price=1056.00, change=-4.00%
+2026/02/09 08:56:41 Sector consumer: price=1344.00, change=-4.00%
+2026/02/09 08:56:41 Sector materials: price=1632.00, change=-4.00%
+2026/02/09 08:56:41 Sector tech: price=950.00, change=-5.00%
+2026/02/09 08:56:41 Sector energy: price=1235.00, change=-5.00%
+2026/02/09 08:56:41 Sector realty: price=1520.00, change=-5.00%
+2026/02/09 08:56:41 Executing stock monitor task
+2026/02/09 08:56:41 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 12203600]
+2026/02/09 08:56:41 Stock 000001.SH: price=13.50, volume=12203600, change=-10.00%
+2026/02/09 08:56:41 开始执行任务: CoreStockMonitoringTask
+2026/02/09 08:56:41 Executing market monitor task
+2026/02/09 08:56:41 Index 000001.SH: price=2946.00, change=-1.80%, trend=strong_down
+2026/02/09 08:56:41 Index 399001.SZ: price=11784.00, change=-1.80%, trend=strong_down
+2026/02/09 08:56:41 Index 399006.SZ: price=2428.80, change=1.20%, trend=up
+2026/02/09 08:56:42 Executing strategy backtest task
+2026/02/09 08:56:42 Backtest result for MACD on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:14 Backtest result for KDJ on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:18 Backtest result for RSI on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:18 缓存股票列表到Redis失败: dial tcp: lookup localhost: i/o timeout
+2026/02/09 08:57:18 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 08:57:18 缓存股票列表到Redis失败: dial tcp: lookup localhost: i/o timeout
+2026/02/09 08:57:18 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 08:57:18 开始处理股票 600519 的监控结果
+2026/02/09 08:57:18 Failed to cache stock data for 000001.SH: dial tcp: lookup localhost: i/o timeout
+2026/02/09 08:57:18 Stock 000002.SH changes detected: [high_volume: 12643900]
+2026/02/09 08:57:18 Stock 000002.SH: price=12.00, volume=12643900, change=0.00%
+2026/02/09 08:57:21 Backtest result for BOLL on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:21 管理回测数据失败: failed to save backtest result to Redis: i/o timeout
+2026/02/09 08:57:21 Failed to cache stock data for 000002.SH: i/o timeout
+2026/02/09 08:57:21 Stock 600519.SH changes detected: [price_change: -10.00% high_volume: 18157200]
+2026/02/09 08:57:21 Stock 600519.SH: price=1620.00, volume=18157200, change=-10.00%
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000001.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for MACD on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000002.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for KDJ on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000002.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for RSI on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000002.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for BOLL on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000002.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for MACD on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for KDJ on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for RSI on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for BOLL on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Stock 000858.SZ changes detected: [price_change: -10.00% high_volume: 16439000]
+2026/02/09 08:57:23 Stock 000858.SZ: price=144.00, volume=16439000, change=-10.00%
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:600519.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for MACD on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Stock 601318.SH changes detected: [high_volume: 15644500]
+2026/02/09 08:57:23 Stock 601318.SH: price=45.00, volume=15644500, change=0.00%
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000858.SZ:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for KDJ on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:23 Backtest result saved to Redis: key=backtest:000858.SZ:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:23 Backtest result for RSI on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:000858.SZ:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:24 Backtest result for BOLL on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:000858.SZ:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:24 Backtest result for MACD on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:601318.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:24 Backtest result for KDJ on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:601318.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:24 Backtest result for RSI on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:601318.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:24 Backtest result for BOLL on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 08:57:24 Backtest result saved to Redis: key=backtest:601318.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:27 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 08:57:27 成功处理股票 600519 的监控结果
+2026/02/09 08:57:31 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 08:57:31 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/09 08:57:31 开始处理股票 000858 的监控结果
+2026/02/09 08:57:31 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:31 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:31 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:31 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:31 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 08:57:31 成功处理股票 000858 的监控结果
+2026/02/09 08:57:35 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 08:57:35 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/09 08:57:35 开始处理股票 000333 的监控结果
+2026/02/09 08:57:35 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:35 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:35 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:35 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:35 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 08:57:35 成功处理股票 000333 的监控结果
+2026/02/09 08:57:39 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 08:57:39 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/09 08:57:39 开始处理股票 601318 的监控结果
+2026/02/09 08:57:40 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:40 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:40 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:40 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:40 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 08:57:40 成功处理股票 601318 的监控结果
+2026/02/09 08:57:44 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 08:57:44 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/09 08:57:44 开始处理股票 600036 的监控结果
+2026/02/09 08:57:44 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 08:57:44 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 08:57:44 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 08:57:44 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 08:57:44 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 08:57:44 成功处理股票 600036 的监控结果
+2026/02/09 08:57:47 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 08:57:47 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/09 08:57:47 任务执行完成: CoreStockMonitoringTask, 耗时: 1m5.7244726s
+2026/02/09 08:58:06 Executing stock monitor task
+2026/02/09 08:58:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 16120800]
+2026/02/09 08:58:06 Stock 000001.SH: price=13.50, volume=16120800, change=-10.00%
+2026/02/09 08:58:06 Stock 000002.SH changes detected: [high_volume: 15940900]
+2026/02/09 08:58:06 Stock 000002.SH: price=12.00, volume=15940900, change=0.00%
+2026/02/09 08:58:06 Stock 600519.SH changes detected: [high_volume: 16316700]
+2026/02/09 08:58:06 Stock 600519.SH: price=1800.00, volume=16316700, change=0.00%
+2026/02/09 08:58:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/09 08:58:06 Stock 000858.SZ: price=144.00, volume=8924000, change=-10.00%
+2026/02/09 08:58:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/09 08:58:06 Stock 601318.SH: price=40.50, volume=8263800, change=-10.00%
+2026/02/09 08:59:06 Executing market monitor task
+2026/02/09 08:59:06 Index 000001.SH: price=2910.00, change=-3.00%, trend=strong_down
+2026/02/09 08:59:06 Alert: Index 000001.SH changed by -3.00%, exceeding threshold of 2.00%
+2026/02/09 08:59:06 Index 399001.SZ: price=11640.00, change=-3.00%, trend=strong_down
+2026/02/09 08:59:06 Alert: Index 399001.SZ changed by -3.00%, exceeding threshold of 2.00%
+2026/02/09 08:59:06 Index 399006.SZ: price=2328.00, change=-3.00%, trend=strong_down
+2026/02/09 08:59:06 Alert: Index 399006.SZ changed by -3.00%, exceeding threshold of 2.00%
+2026/02/09 09:01:06 Executing stock monitor task
+2026/02/09 09:01:06 Stock 000001.SH changes detected: [high_volume: 18719300]
+2026/02/09 09:01:06 Stock 000001.SH: price=15.00, volume=18719300, change=0.00%
+2026/02/09 09:01:06 Stock 000002.SH: price=12.00, volume=6830100, change=0.00%
+2026/02/09 09:01:06 Stock 600519.SH: price=1800.00, volume=6830100, change=0.00%
+2026/02/09 09:01:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/09 09:01:06 Stock 000858.SZ: price=144.00, volume=7827600, change=-10.00%
+2026/02/09 09:01:06 Stock 601318.SH: price=45.00, volume=8827100, change=0.00%
+2026/02/09 09:01:41 开始执行任务: CoreStockMonitoringTask
+2026/02/09 09:01:41 股票列表已缓存到Redis
+2026/02/09 09:01:41 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:01:41 开始处理股票 600519 的监控结果
+2026/02/09 09:01:41 Backtest result saved to Redis: key=backtest:600519:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:01:41 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:01:41 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:01:41 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:01:41 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 09:01:41 成功处理股票 600519 的监控结果
+2026/02/09 09:01:45 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:01:45 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/09 09:01:45 开始处理股票 000858 的监控结果
+2026/02/09 09:01:45 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:01:45 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:01:45 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:01:45 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:01:45 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 09:01:45 成功处理股票 000858 的监控结果
+2026/02/09 09:01:48 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:01:48 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/09 09:01:48 开始处理股票 000333 的监控结果
+2026/02/09 09:01:48 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:01:48 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:01:48 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:01:48 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:01:48 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 09:01:48 成功处理股票 000333 的监控结果
+2026/02/09 09:01:51 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:01:51 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/09 09:01:51 开始处理股票 601318 的监控结果
+2026/02/09 09:01:51 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:01:51 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:01:51 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:01:51 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:01:51 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 09:01:51 成功处理股票 601318 的监控结果
+2026/02/09 09:01:55 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:01:55 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/09 09:01:55 开始处理股票 600036 的监控结果
+2026/02/09 09:01:55 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:01:55 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:01:55 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:01:55 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:01:55 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 09:01:55 成功处理股票 600036 的监控结果
+2026/02/09 09:01:58 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:01:58 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/09 09:01:58 任务执行完成: CoreStockMonitoringTask, 耗时: 16.5804591s
+2026/02/09 09:04:06 Executing strategy backtest task
+2026/02/09 09:04:06 Executing stock monitor task
+2026/02/09 09:04:06 Stock 000001.SH changes detected: [high_volume: 18670100]
+2026/02/09 09:04:06 Backtest result for MACD on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Executing sector monitor task
+2026/02/09 09:04:06 Executing news crawl task
+2026/02/09 09:04:06 Executing market monitor task
+2026/02/09 09:04:06 Crawling news from sina: https://finance.sina.com.cn
+2026/02/09 09:04:06 Hot sectors: []
+2026/02/09 09:04:06 Index 000001.SH: price=2928.00, change=-2.40%, trend=strong_down
+2026/02/09 09:04:06 Stock 000001.SH: price=15.00, volume=18670100, change=0.00%
+2026/02/09 09:04:06 Crawling news from eastmoney: https://www.eastmoney.com
+2026/02/09 09:04:06 Alert: Index 000001.SH changed by -2.40%, exceeding threshold of 2.00%
+2026/02/09 09:04:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/09 09:04:06 Index 399001.SZ: price=11712.00, change=-2.40%, trend=strong_down
+2026/02/09 09:04:06 Sector health: price=1164.00, change=-3.00%
+2026/02/09 09:04:06 Alert: Index 399001.SZ changed by -2.40%, exceeding threshold of 2.00%
+2026/02/09 09:04:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/09 09:04:06 Index 399006.SZ: price=2342.40, change=-2.40%, trend=strong_down
+2026/02/09 09:04:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/09 09:04:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/09 09:04:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/09 09:04:06 Sector tech: price=950.00, change=-5.00%
+2026/02/09 09:04:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/09 09:04:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/09 09:04:06 Alert: Index 399006.SZ changed by -2.40%, exceeding threshold of 2.00%
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000001.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for KDJ on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Stock 000002.SH: price=12.00, volume=7067700, change=0.00%
+2026/02/09 09:04:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:04:06 Stock 600519.SH: price=1620.00, volume=7246800, change=-10.00%
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000001.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for RSI on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/09 09:04:06 Stock 000858.SZ: price=144.00, volume=8288000, change=-10.00%
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000001.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for BOLL on 000001.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Stock 601318.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:04:06 Stock 601318.SH: price=40.50, volume=8808600, change=-10.00%
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000001.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for MACD on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000002.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for KDJ on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000002.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for RSI on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000002.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for BOLL on 000002.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000002.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for MACD on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:600519.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for KDJ on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:600519.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for RSI on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:600519.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for BOLL on 600519.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:600519.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for MACD on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for KDJ on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for RSI on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for BOLL on 000858.SZ: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:000858.SZ:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for MACD on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:601318.SH:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for KDJ on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:601318.SH:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for RSI on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:601318.SH:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:04:06 Backtest result for BOLL on 601318.SH: success rate=65.00%, total trades=20, profitable trades=13
+2026/02/09 09:04:06 Backtest result saved to Redis: key=backtest:601318.SH:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:00 开始执行任务: CoreStockMonitoringTask
+2026/02/09 09:05:00 股票列表已缓存到Redis
+2026/02/09 09:05:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:05:00 开始处理股票 600519 的监控结果
+2026/02/09 09:05:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:05:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:05:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:05:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 09:05:00 成功处理股票 600519 的监控结果
+2026/02/09 09:05:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:05:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/09 09:05:03 开始处理股票 000858 的监控结果
+2026/02/09 09:05:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:05:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:05:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:05:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 09:05:03 成功处理股票 000858 的监控结果
+2026/02/09 09:05:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:05:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/09 09:05:06 开始处理股票 000333 的监控结果
+2026/02/09 09:05:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:05:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:05:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:05:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 09:05:06 成功处理股票 000333 的监控结果
+2026/02/09 09:05:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:05:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/09 09:05:09 开始处理股票 601318 的监控结果
+2026/02/09 09:05:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:05:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:05:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:05:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 09:05:09 成功处理股票 601318 的监控结果
+2026/02/09 09:05:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:05:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/09 09:05:12 开始处理股票 600036 的监控结果
+2026/02/09 09:05:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:05:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:05:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:05:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:05:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 09:05:12 成功处理股票 600036 的监控结果
+2026/02/09 09:05:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:05:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/09 09:05:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.5913809s
+2026/02/09 09:07:06 Executing stock monitor task
+2026/02/09 09:07:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18569400]
+2026/02/09 09:07:06 Stock 000001.SH: price=13.50, volume=18569400, change=-10.00%
+2026/02/09 09:07:06 Stock 000002.SH: price=12.00, volume=7712700, change=0.00%
+2026/02/09 09:07:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:07:06 Stock 600519.SH: price=1620.00, volume=9144400, change=-10.00%
+2026/02/09 09:07:06 Stock 000858.SZ changes detected: [high_volume: 10305300]
+2026/02/09 09:07:06 Stock 000858.SZ: price=160.00, volume=10305300, change=0.00%
+2026/02/09 09:07:06 Stock 601318.SH changes detected: [high_volume: 12317100]
+2026/02/09 09:07:06 Stock 601318.SH: price=45.00, volume=12317100, change=0.00%
+2026/02/09 09:07:18 股票列表已缓存到Redis
+2026/02/09 09:07:18 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:09:06 Executing market monitor task
+2026/02/09 09:09:06 Index 000001.SH: price=2982.00, change=-0.60%, trend=down
+2026/02/09 09:09:06 Index 399001.SZ: price=11928.00, change=-0.60%, trend=down
+2026/02/09 09:09:06 Index 399006.SZ: price=2385.60, change=-0.60%, trend=down
+2026/02/09 09:10:00 开始执行任务: CoreStockMonitoringTask
+2026/02/09 09:10:00 股票列表已缓存到Redis
+2026/02/09 09:10:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:10:00 开始处理股票 600519 的监控结果
+2026/02/09 09:10:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:10:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:10:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:10:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:10:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 09:10:00 成功处理股票 600519 的监控结果
+2026/02/09 09:10:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:10:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/09 09:10:03 开始处理股票 000858 的监控结果
+2026/02/09 09:10:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:10:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:10:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:10:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:10:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 09:10:03 成功处理股票 000858 的监控结果
+2026/02/09 09:10:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:10:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/09 09:10:06 开始处理股票 000333 的监控结果
+2026/02/09 09:10:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:10:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:10:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:10:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:10:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 09:10:06 成功处理股票 000333 的监控结果
+2026/02/09 09:10:06 Executing stock monitor task
+2026/02/09 09:10:06 Stock 000001.SH changes detected: [high_volume: 18792900]
+2026/02/09 09:10:06 Stock 000001.SH: price=15.00, volume=18792900, change=0.00%
+2026/02/09 09:10:06 Stock 000002.SH: price=12.00, volume=6559100, change=0.00%
+2026/02/09 09:10:06 Stock 600519.SH: price=1800.00, volume=7764300, change=0.00%
+2026/02/09 09:10:06 Stock 000858.SZ: price=160.00, volume=9717100, change=0.00%
+2026/02/09 09:10:06 Stock 601318.SH changes detected: [high_volume: 10975900]
+2026/02/09 09:10:06 Stock 601318.SH: price=45.00, volume=10975900, change=0.00%
+2026/02/09 09:10:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:10:09 通知频率过高，跳过通知: backtest_result - 000333
+2026/02/09 09:10:09 开始处理股票 601318 的监控结果
+2026/02/09 09:10:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:10:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:10:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:10:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:10:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 09:10:09 成功处理股票 601318 的监控结果
+2026/02/09 09:10:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:10:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/09 09:10:12 开始处理股票 600036 的监控结果
+2026/02/09 09:10:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:10:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:10:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:10:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:10:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 09:10:12 成功处理股票 600036 的监控结果
+2026/02/09 09:10:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:10:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/09 09:10:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.2703658s
+2026/02/09 09:13:06 Executing stock monitor task
+2026/02/09 09:13:06 Stock 000001.SH changes detected: [high_volume: 18784700]
+2026/02/09 09:13:06 Stock 000001.SH: price=15.00, volume=18784700, change=0.00%
+2026/02/09 09:13:06 Stock 000002.SH: price=12.00, volume=8633900, change=0.00%
+2026/02/09 09:13:06 Stock 600519.SH changes detected: [high_volume: 10114500]
+2026/02/09 09:13:06 Stock 600519.SH: price=1800.00, volume=10114500, change=0.00%
+2026/02/09 09:13:06 Stock 000858.SZ changes detected: [high_volume: 11633500]
+2026/02/09 09:13:06 Stock 000858.SZ: price=160.00, volume=11633500, change=0.00%
+2026/02/09 09:13:06 Stock 601318.SH changes detected: [price_change: -10.00% high_volume: 12747800]
+2026/02/09 09:13:06 Stock 601318.SH: price=40.50, volume=12747800, change=-10.00%
+2026/02/09 09:14:06 Executing sector monitor task
+2026/02/09 09:14:06 Executing market monitor task
+2026/02/09 09:14:06 Index 000001.SH: price=2910.00, change=-3.00%, trend=strong_down
+2026/02/09 09:14:06 Alert: Index 000001.SH changed by -3.00%, exceeding threshold of 2.00%
+2026/02/09 09:14:06 Index 399001.SZ: price=11856.00, change=-1.20%, trend=down
+2026/02/09 09:14:06 Index 399006.SZ: price=2371.20, change=-1.20%, trend=down
+2026/02/09 09:14:06 Hot sectors: []
+2026/02/09 09:14:06 Sector linkage analysis: map[falling:[health industry finance consumer materials tech energy realty] rising:[]]
+2026/02/09 09:14:06 Sector health: price=1164.00, change=-3.00%
+2026/02/09 09:14:06 Sector industry: price=1455.00, change=-3.00%
+2026/02/09 09:14:06 Sector finance: price=1056.00, change=-4.00%
+2026/02/09 09:14:06 Sector consumer: price=1344.00, change=-4.00%
+2026/02/09 09:14:06 Sector materials: price=1632.00, change=-4.00%
+2026/02/09 09:14:06 Sector tech: price=950.00, change=-5.00%
+2026/02/09 09:14:06 Sector energy: price=1235.00, change=-5.00%
+2026/02/09 09:14:06 Sector realty: price=1520.00, change=-5.00%
+2026/02/09 09:15:00 开始执行任务: CoreStockMonitoringTask
+2026/02/09 09:15:00 股票列表已缓存到Redis
+2026/02/09 09:15:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:15:00 开始处理股票 600519 的监控结果
+2026/02/09 09:15:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:15:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:15:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:15:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:15:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 09:15:00 成功处理股票 600519 的监控结果
+2026/02/09 09:15:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:15:03 成功发送通知: backtest_result - 600519, 严重程度: info
+2026/02/09 09:15:03 开始处理股票 000858 的监控结果
+2026/02/09 09:15:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:15:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:15:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:15:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:15:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 09:15:03 成功处理股票 000858 的监控结果
+2026/02/09 09:15:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:15:06 成功发送通知: backtest_result - 000858, 严重程度: info
+2026/02/09 09:15:06 开始处理股票 000333 的监控结果
+2026/02/09 09:15:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:15:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:15:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:15:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:15:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 09:15:06 成功处理股票 000333 的监控结果
+2026/02/09 09:15:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:15:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/09 09:15:09 开始处理股票 601318 的监控结果
+2026/02/09 09:15:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:15:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:15:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:15:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:15:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 09:15:09 成功处理股票 601318 的监控结果
+2026/02/09 09:15:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:15:12 成功发送通知: backtest_result - 601318, 严重程度: info
+2026/02/09 09:15:12 开始处理股票 600036 的监控结果
+2026/02/09 09:15:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:15:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:15:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:15:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:15:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 09:15:12 成功处理股票 600036 的监控结果
+2026/02/09 09:15:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:15:15 成功发送通知: backtest_result - 600036, 严重程度: info
+2026/02/09 09:15:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.1674253s
+2026/02/09 09:16:06 Executing stock monitor task
+2026/02/09 09:16:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 18926000]
+2026/02/09 09:16:06 Stock 000001.SH: price=13.50, volume=18926000, change=-10.00%
+2026/02/09 09:16:06 Stock 000002.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:16:06 Stock 000002.SH: price=10.80, volume=9271800, change=-10.00%
+2026/02/09 09:16:06 Stock 600519.SH changes detected: [price_change: -10.00% high_volume: 11341600]
+2026/02/09 09:16:06 Stock 600519.SH: price=1620.00, volume=11341600, change=-10.00%
+2026/02/09 09:16:06 Stock 000858.SZ changes detected: [price_change: -10.00% high_volume: 13073400]
+2026/02/09 09:16:06 Stock 000858.SZ: price=144.00, volume=13073400, change=-10.00%
+2026/02/09 09:16:06 Stock 601318.SH changes detected: [high_volume: 15338700]
+2026/02/09 09:16:06 Stock 601318.SH: price=45.00, volume=15338700, change=0.00%
+2026/02/09 09:17:18 股票列表已缓存到Redis
+2026/02/09 09:17:18 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:19:06 Executing market monitor task
+2026/02/09 09:19:06 Executing stock monitor task
+2026/02/09 09:19:06 Index 000001.SH: price=3018.00, change=0.60%, trend=up
+2026/02/09 09:19:06 Index 399001.SZ: price=12072.00, change=0.60%, trend=up
+2026/02/09 09:19:06 Index 399006.SZ: price=2414.40, change=0.60%, trend=up
+2026/02/09 09:19:06 Stock 000001.SH changes detected: [price_change: -10.00% high_volume: 19208600]
+2026/02/09 09:19:06 Stock 000001.SH: price=13.50, volume=19208600, change=-10.00%
+2026/02/09 09:19:06 Stock 000002.SH: price=12.00, volume=7275300, change=0.00%
+2026/02/09 09:19:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:19:06 Stock 600519.SH: price=1620.00, volume=8372200, change=-10.00%
+2026/02/09 09:19:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/09 09:19:06 Stock 000858.SZ: price=144.00, volume=9333400, change=-10.00%
+2026/02/09 09:19:06 Stock 601318.SH changes detected: [high_volume: 10432500]
+2026/02/09 09:19:06 Stock 601318.SH: price=45.00, volume=10432500, change=0.00%
+2026/02/09 09:20:00 开始执行任务: CoreStockMonitoringTask
+2026/02/09 09:20:00 股票列表已缓存到Redis
+2026/02/09 09:20:00 成功从数据服务拉取股票列表，共 5 只股票
+2026/02/09 09:20:00 开始处理股票 600519 的监控结果
+2026/02/09 09:20:00 Backtest result saved to Redis: key=backtest:600519:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:20:00 Backtest result saved to Redis: key=backtest:600519:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:20:00 Backtest result saved to Redis: key=backtest:600519:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:20:00 Backtest result saved to Redis: key=backtest:600519:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:20:00 监控结果已存储到Redis，键: stock:monitor:result:600519
+2026/02/09 09:20:00 成功处理股票 600519 的监控结果
+2026/02/09 09:20:03 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:20:03 通知频率过高，跳过通知: backtest_result - 600519
+2026/02/09 09:20:03 开始处理股票 000858 的监控结果
+2026/02/09 09:20:03 Backtest result saved to Redis: key=backtest:000858:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:20:03 Backtest result saved to Redis: key=backtest:000858:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:20:03 Backtest result saved to Redis: key=backtest:000858:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:20:03 Backtest result saved to Redis: key=backtest:000858:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:20:03 监控结果已存储到Redis，键: stock:monitor:result:000858
+2026/02/09 09:20:03 成功处理股票 000858 的监控结果
+2026/02/09 09:20:06 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:20:06 通知频率过高，跳过通知: backtest_result - 000858
+2026/02/09 09:20:06 开始处理股票 000333 的监控结果
+2026/02/09 09:20:06 Backtest result saved to Redis: key=backtest:000333:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:20:06 Backtest result saved to Redis: key=backtest:000333:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:20:06 Backtest result saved to Redis: key=backtest:000333:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:20:06 Backtest result saved to Redis: key=backtest:000333:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:20:06 监控结果已存储到Redis，键: stock:monitor:result:000333
+2026/02/09 09:20:06 成功处理股票 000333 的监控结果
+2026/02/09 09:20:09 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:20:09 成功发送通知: backtest_result - 000333, 严重程度: info
+2026/02/09 09:20:09 开始处理股票 601318 的监控结果
+2026/02/09 09:20:09 Backtest result saved to Redis: key=backtest:601318:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:20:09 Backtest result saved to Redis: key=backtest:601318:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:20:09 Backtest result saved to Redis: key=backtest:601318:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:20:09 Backtest result saved to Redis: key=backtest:601318:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:20:09 监控结果已存储到Redis，键: stock:monitor:result:601318
+2026/02/09 09:20:09 成功处理股票 601318 的监控结果
+2026/02/09 09:20:12 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:20:12 通知频率过高，跳过通知: backtest_result - 601318
+2026/02/09 09:20:12 开始处理股票 600036 的监控结果
+2026/02/09 09:20:12 Backtest result saved to Redis: key=backtest:600036:MACD:20260209, expiry=120h0m0s
+2026/02/09 09:20:12 Backtest result saved to Redis: key=backtest:600036:KDJ:20260209, expiry=120h0m0s
+2026/02/09 09:20:12 Backtest result saved to Redis: key=backtest:600036:RSI:20260209, expiry=120h0m0s
+2026/02/09 09:20:12 Backtest result saved to Redis: key=backtest:600036:BOLL:20260209, expiry=120h0m0s
+2026/02/09 09:20:12 监控结果已存储到Redis，键: stock:monitor:result:600036
+2026/02/09 09:20:12 成功处理股票 600036 的监控结果
+2026/02/09 09:20:15 发送通知失败: failed to reconnect to RabbitMQ: failed to connect to RabbitMQ: Exception (403) Reason: "username or password not allowed"
+2026/02/09 09:20:15 通知频率过高，跳过通知: backtest_result - 600036
+2026/02/09 09:20:15 任务执行完成: CoreStockMonitoringTask, 耗时: 15.1057056s
+2026/02/09 09:22:06 Executing stock monitor task
+2026/02/09 09:22:06 Stock 000001.SH changes detected: [high_volume: 18684500]
+2026/02/09 09:22:06 Stock 000001.SH: price=15.00, volume=18684500, change=0.00%
+2026/02/09 09:22:06 Stock 000002.SH: price=12.00, volume=5860100, change=0.00%
+2026/02/09 09:22:06 Stock 600519.SH changes detected: [price_change: -10.00%]
+2026/02/09 09:22:06 Stock 600519.SH: price=1620.00, volume=6385200, change=-10.00%
+2026/02/09 09:22:06 Stock 000858.SZ changes detected: [price_change: -10.00%]
+2026/02/09 09:22:06 Stock 000858.SZ: price=144.00, volume=7434200, change=-10.00%
+2026/02/09 09:22:06 Stock 601318.SH: price=45.00, volume=8876100, change=0.00%
