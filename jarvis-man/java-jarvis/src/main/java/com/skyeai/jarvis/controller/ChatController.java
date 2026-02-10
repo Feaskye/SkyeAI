@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.skyeai.jarvis.model.AnomalyDetectionResult;
 import com.skyeai.jarvis.model.HealthData;
 import com.skyeai.jarvis.service.ServiceClient;
+import com.skyeai.jarvis.service.chat.SmartChatService;
 import com.skyeai.jarvis.service.nlp.ConversationResult;
 import com.skyeai.jarvis.service.nlp.EnhancedLanguageResult;
 import io.grpc.ManagedChannel;
@@ -249,15 +250,18 @@ public class ChatController implements WebSocketConfigurer {
     private final WebClient webClient;
     private final String systemPrompt;
     private final ServiceClient serviceClient;
+    private final SmartChatService smartChatService;
 
     public ChatController(WebClient.Builder webClientBuilder, 
                          @Value("${ai.system.prompt}") String systemPrompt,
-                         ServiceClient serviceClient) {
+                         ServiceClient serviceClient,
+                         SmartChatService smartChatService) {
         this.webClient = webClientBuilder
                 .baseUrl("http://localhost:11434")
                 .build();
         this.systemPrompt = systemPrompt;
         this.serviceClient = serviceClient;
+        this.smartChatService = smartChatService;
     }
 
     // 通用聊天接口
@@ -266,33 +270,75 @@ public class ChatController implements WebSocketConfigurer {
         // 调用大模型服务，服务内部已处理异常
         String query = request.getOrDefault("query", "").toString();
         String model = request.getOrDefault("model", "aliyun").toString();
-        System.out.println("接收到的查询内容: " + query + "，模型: " + model);
+        boolean useRealtimeData = (boolean) request.getOrDefault("useRealtimeData", false);
+        String sessionId = (String) request.getOrDefault("sessionId", "default");
+        Map<String, Object> parameters = (Map<String, Object>) request.getOrDefault("parameters", new HashMap<>());
         
-        // 先调用认知服务处理请求
-        Map<String, Object> cognitionRequest = Map.of(
-                "query", query
-        );
-        System.out.println("调用认知服务处理请求...");
-        String cognitionResult = serviceClient.callCognitionService("/react", cognitionRequest);
-        System.out.println("认知服务处理结果: " + cognitionResult);
+        System.out.println("接收到的查询内容: " + query + "，模型: " + model + "，使用实时数据: " + useRealtimeData + "，会话ID: " + sessionId);
         
-        // 使用ServiceClient调用LLM服务
-        Map<String, Object> llmRequest = Map.of(
-                "prompt", cognitionResult,
-                "model", model,
-                "systemPrompt", "你是一个有帮助的助手，请用中文回答用户的问题。"
-        );
-        Map<String, Object> result = serviceClient.callLlmService("/generate/text", llmRequest);
-        String response = result.get("result").toString();
-        System.out.println("返回响应内容: " + response);
-        
-        // 构建响应
-        Map<String, Object> responseMap = Map.of(
-                "response", response,
-                "model", model
-        );
-        
-        return ResponseEntity.ok(responseMap);
+        try {
+            // 判断是否使用智能对话
+            if (useRealtimeData) {
+                // 使用智能对话
+                System.out.println("使用智能对话处理请求...");
+                ConversationResult result = smartChatService.chat(query, sessionId, useRealtimeData, parameters);
+                
+                // 构建响应
+                Map<String, Object> responseMap = Map.of(
+                        "response", result.getResponse(),
+                        "model", model,
+                        "sessionId", result.getSessionId(),
+                        "sources", getSources(result)
+                );
+                
+                return ResponseEntity.ok(responseMap);
+            } else {
+                // 使用基础对话
+                System.out.println("使用基础对话处理请求...");
+                // 先调用认知服务处理请求
+                Map<String, Object> cognitionRequest = Map.of(
+                        "query", query
+                );
+                System.out.println("调用认知服务处理请求...");
+                String cognitionResult = serviceClient.callCognitionService("/react", cognitionRequest);
+                System.out.println("认知服务处理结果: " + cognitionResult);
+                
+                // 使用ServiceClient调用LLM服务
+                Map<String, Object> llmRequest = Map.of(
+                        "prompt", cognitionResult,
+                        "model", model,
+                        "systemPrompt", "你是一个有帮助的助手，请用中文回答用户的问题。"
+                );
+                Map<String, Object> result = serviceClient.callLlmService("/generate/text", llmRequest);
+                String response = result.get("result").toString();
+                System.out.println("返回响应内容: " + response);
+                
+                // 构建响应
+                Map<String, Object> responseMap = Map.of(
+                        "response", response,
+                        "model", model
+                );
+                
+                return ResponseEntity.ok(responseMap);
+            }
+        } catch (Exception e) {
+            System.err.println("处理聊天请求失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "处理聊天请求失败: " + e.getMessage(),
+                    "model", model
+            ));
+        }
+    }
+    
+    /**
+     * 获取对话来源
+     * @param result 对话结果
+     * @return 来源列表
+     */
+    private Map<String, Object> getSources(ConversationResult result) {
+        // 这里应该从对话结果中提取来源信息
+        // 暂时返回空对象
+        return Map.of();
     }
 
     // 通用音频处理接口
@@ -648,6 +694,57 @@ public class ChatController implements WebSocketConfigurer {
             return ResponseEntity.badRequest().body(Map.of(
                     "status", "error",
                     "message", "Failed to get chat history: " + e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 获取会话列表
+     */
+    @GetMapping("/chat/sessions")
+    public ResponseEntity<Map<String, Object>> getSessions(@RequestParam String userId) {
+        try {
+            System.out.println("获取会话列表，用户ID: " + userId);
+            Map<String, Object> result = smartChatService.getSessions(userId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("获取会话列表失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "获取会话列表失败: " + e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 获取会话详情
+     */
+    @GetMapping("/chat/sessions/{id}")
+    public ResponseEntity<Map<String, Object>> getSessionDetail(@PathVariable String id) {
+        try {
+            System.out.println("获取会话详情，会话ID: " + id);
+            Map<String, Object> result = smartChatService.getSessionDetail(id);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("获取会话详情失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "获取会话详情失败: " + e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 结束会话
+     */
+    @DeleteMapping("/chat/sessions/{id}")
+    public ResponseEntity<Map<String, Object>> endSession(@PathVariable String id) {
+        try {
+            System.out.println("结束会话，会话ID: " + id);
+            Map<String, Object> result = smartChatService.endSession(id);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("结束会话失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "结束会话失败: " + e.getMessage()
             ));
         }
     }
