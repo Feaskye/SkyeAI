@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.32.0
-// source: pkg/api/edge.proto
+// source: edge.proto
 
 package api
 
@@ -19,9 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	EdgeService_HealthCheck_FullMethodName = "/api.EdgeService/HealthCheck"
-	EdgeService_GetStatus_FullMethodName   = "/api.EdgeService/GetStatus"
-	EdgeService_StreamAudio_FullMethodName = "/api.EdgeService/StreamAudio"
+	EdgeService_HealthCheck_FullMethodName       = "/api.EdgeService/HealthCheck"
+	EdgeService_GetStatus_FullMethodName         = "/api.EdgeService/GetStatus"
+	EdgeService_StreamAudio_FullMethodName       = "/api.EdgeService/StreamAudio"
+	EdgeService_DetectHardware_FullMethodName    = "/api.EdgeService/DetectHardware"
+	EdgeService_OptimizeModel_FullMethodName     = "/api.EdgeService/OptimizeModel"
+	EdgeService_GetOptimizedModel_FullMethodName = "/api.EdgeService/GetOptimizedModel"
+	EdgeService_RunInference_FullMethodName      = "/api.EdgeService/RunInference"
 )
 
 // EdgeServiceClient is the client API for EdgeService service.
@@ -36,6 +40,14 @@ type EdgeServiceClient interface {
 	GetStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	// 音频流处理（双向流）
 	StreamAudio(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[AudioRequest, AudioResponse], error)
+	// 芯片检测
+	DetectHardware(ctx context.Context, in *DetectHardwareRequest, opts ...grpc.CallOption) (*DetectHardwareResponse, error)
+	// 模型优化
+	OptimizeModel(ctx context.Context, in *OptimizeModelRequest, opts ...grpc.CallOption) (*OptimizeModelResponse, error)
+	// 获取优化模型
+	GetOptimizedModel(ctx context.Context, in *GetOptimizedModelRequest, opts ...grpc.CallOption) (*GetOptimizedModelResponse, error)
+	// 运行推理
+	RunInference(ctx context.Context, in *RunInferenceRequest, opts ...grpc.CallOption) (*RunInferenceResponse, error)
 }
 
 type edgeServiceClient struct {
@@ -79,6 +91,46 @@ func (c *edgeServiceClient) StreamAudio(ctx context.Context, opts ...grpc.CallOp
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type EdgeService_StreamAudioClient = grpc.BidiStreamingClient[AudioRequest, AudioResponse]
 
+func (c *edgeServiceClient) DetectHardware(ctx context.Context, in *DetectHardwareRequest, opts ...grpc.CallOption) (*DetectHardwareResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DetectHardwareResponse)
+	err := c.cc.Invoke(ctx, EdgeService_DetectHardware_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *edgeServiceClient) OptimizeModel(ctx context.Context, in *OptimizeModelRequest, opts ...grpc.CallOption) (*OptimizeModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OptimizeModelResponse)
+	err := c.cc.Invoke(ctx, EdgeService_OptimizeModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *edgeServiceClient) GetOptimizedModel(ctx context.Context, in *GetOptimizedModelRequest, opts ...grpc.CallOption) (*GetOptimizedModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOptimizedModelResponse)
+	err := c.cc.Invoke(ctx, EdgeService_GetOptimizedModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *edgeServiceClient) RunInference(ctx context.Context, in *RunInferenceRequest, opts ...grpc.CallOption) (*RunInferenceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RunInferenceResponse)
+	err := c.cc.Invoke(ctx, EdgeService_RunInference_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EdgeServiceServer is the server API for EdgeService service.
 // All implementations must embed UnimplementedEdgeServiceServer
 // for forward compatibility.
@@ -91,6 +143,14 @@ type EdgeServiceServer interface {
 	GetStatus(context.Context, *StatusRequest) (*StatusResponse, error)
 	// 音频流处理（双向流）
 	StreamAudio(grpc.BidiStreamingServer[AudioRequest, AudioResponse]) error
+	// 芯片检测
+	DetectHardware(context.Context, *DetectHardwareRequest) (*DetectHardwareResponse, error)
+	// 模型优化
+	OptimizeModel(context.Context, *OptimizeModelRequest) (*OptimizeModelResponse, error)
+	// 获取优化模型
+	GetOptimizedModel(context.Context, *GetOptimizedModelRequest) (*GetOptimizedModelResponse, error)
+	// 运行推理
+	RunInference(context.Context, *RunInferenceRequest) (*RunInferenceResponse, error)
 	mustEmbedUnimplementedEdgeServiceServer()
 }
 
@@ -109,6 +169,18 @@ func (UnimplementedEdgeServiceServer) GetStatus(context.Context, *StatusRequest)
 }
 func (UnimplementedEdgeServiceServer) StreamAudio(grpc.BidiStreamingServer[AudioRequest, AudioResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamAudio not implemented")
+}
+func (UnimplementedEdgeServiceServer) DetectHardware(context.Context, *DetectHardwareRequest) (*DetectHardwareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetectHardware not implemented")
+}
+func (UnimplementedEdgeServiceServer) OptimizeModel(context.Context, *OptimizeModelRequest) (*OptimizeModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OptimizeModel not implemented")
+}
+func (UnimplementedEdgeServiceServer) GetOptimizedModel(context.Context, *GetOptimizedModelRequest) (*GetOptimizedModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOptimizedModel not implemented")
+}
+func (UnimplementedEdgeServiceServer) RunInference(context.Context, *RunInferenceRequest) (*RunInferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunInference not implemented")
 }
 func (UnimplementedEdgeServiceServer) mustEmbedUnimplementedEdgeServiceServer() {}
 func (UnimplementedEdgeServiceServer) testEmbeddedByValue()                     {}
@@ -174,6 +246,78 @@ func _EdgeService_StreamAudio_Handler(srv interface{}, stream grpc.ServerStream)
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type EdgeService_StreamAudioServer = grpc.BidiStreamingServer[AudioRequest, AudioResponse]
 
+func _EdgeService_DetectHardware_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DetectHardwareRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EdgeServiceServer).DetectHardware(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EdgeService_DetectHardware_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EdgeServiceServer).DetectHardware(ctx, req.(*DetectHardwareRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EdgeService_OptimizeModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptimizeModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EdgeServiceServer).OptimizeModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EdgeService_OptimizeModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EdgeServiceServer).OptimizeModel(ctx, req.(*OptimizeModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EdgeService_GetOptimizedModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOptimizedModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EdgeServiceServer).GetOptimizedModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EdgeService_GetOptimizedModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EdgeServiceServer).GetOptimizedModel(ctx, req.(*GetOptimizedModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EdgeService_RunInference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunInferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EdgeServiceServer).RunInference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EdgeService_RunInference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EdgeServiceServer).RunInference(ctx, req.(*RunInferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EdgeService_ServiceDesc is the grpc.ServiceDesc for EdgeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -189,6 +333,22 @@ var EdgeService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetStatus",
 			Handler:    _EdgeService_GetStatus_Handler,
 		},
+		{
+			MethodName: "DetectHardware",
+			Handler:    _EdgeService_DetectHardware_Handler,
+		},
+		{
+			MethodName: "OptimizeModel",
+			Handler:    _EdgeService_OptimizeModel_Handler,
+		},
+		{
+			MethodName: "GetOptimizedModel",
+			Handler:    _EdgeService_GetOptimizedModel_Handler,
+		},
+		{
+			MethodName: "RunInference",
+			Handler:    _EdgeService_RunInference_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -198,5 +358,5 @@ var EdgeService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "pkg/api/edge.proto",
+	Metadata: "edge.proto",
 }

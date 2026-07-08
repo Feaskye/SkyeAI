@@ -31,9 +31,9 @@ type Config struct {
 		UserID  string `toml:"USER_ID"`
 	} `toml:"SERVICE"`
 	Port struct {
-		GRPCPort      string `toml:"GRPC_PORT"`
-		HTTPPort      string `toml:"HTTP_PORT"`
-		EdgeHTTPPort  string `toml:"EDGE_HTTP_PORT"`
+		GRPCPort     string `toml:"GRPC_PORT"`
+		HTTPPort     string `toml:"HTTP_PORT"`
+		EdgeHTTPPort string `toml:"EDGE_HTTP_PORT"`
 	} `toml:"PORT"`
 	MQTT struct {
 		BrokerURL      string `toml:"BROKER_URL"`
@@ -91,6 +91,7 @@ func main() {
 	multimodalInput := input.NewMultimodalInput()
 	imageUnderstanding := vision.NewImageUnderstanding()
 	voiceInteraction := voice.NewVoiceInteraction("models/whisper", "zh", "zh_CN-huayan-medium")
+	voiceConversation := voice.NewVoiceConversation("models/whisper", "zh", "zh_CN-huayan-medium")
 
 	// 启动gRPC服务器
 	grpcServer := grpc.NewServer()
@@ -426,6 +427,79 @@ func main() {
 			"confidence": result.Confidence,
 			"language":   result.Language,
 			"response":   "base64-encoded-audio-data",
+		})
+	})
+
+	// 3. 全双工对话API
+	// 开始对话
+	router.POST("/api/voice/conversation/start", func(c *gin.Context) {
+		voiceConversation.StartConversation()
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "success",
+			"message": "对话开始，进入监听模式",
+			"state":   voiceConversation.GetState(),
+		})
+	})
+
+	// 结束对话
+	router.POST("/api/voice/conversation/end", func(c *gin.Context) {
+		voiceConversation.EndConversation()
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "success",
+			"message": "对话结束",
+			"state":   voiceConversation.GetState(),
+		})
+	})
+
+	// 获取对话状态
+	router.GET("/api/voice/conversation/state", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":        "success",
+			"state":         voiceConversation.GetState(),
+			"is_idle":       voiceConversation.IsIdle(),
+			"is_listening":  voiceConversation.IsListening(),
+			"is_processing": voiceConversation.IsProcessing(),
+			"is_speaking":   voiceConversation.IsSpeaking(),
+		})
+	})
+
+	// 处理对话音频（支持全双工）
+	router.POST("/api/voice/conversation/audio", func(c *gin.Context) {
+		var request struct {
+			Audio    string `json:"audio" binding:"required"`
+			Language string `json:"language" default:"zh"`
+		}
+
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
+			return
+		}
+
+		// 处理语音输入
+		audioData := []byte(request.Audio)
+		result, emotion, responseAudio, err := voiceConversation.ProcessAudio(audioData)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process audio: " + err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":          "success",
+			"text":            result.Text,
+			"emotion":         emotion,
+			"response":        string(responseAudio),
+			"state":           voiceConversation.GetState(),
+			"is_interrupting": voiceConversation.IsInterrupting(),
+		})
+	})
+
+	// 完成说话
+	router.POST("/api/voice/conversation/finish-speaking", func(c *gin.Context) {
+		voiceConversation.FinishSpeaking()
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "success",
+			"message": "说话完成，切换到监听模式",
+			"state":   voiceConversation.GetState(),
 		})
 	})
 

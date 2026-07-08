@@ -105,10 +105,106 @@ public interface LlmService {
      */
     String generateFinalAnswer(String query, String history, String contextInfo, String userPreferences, String taskPlan);
 
+    // ==================== Agent专用接口 ====================
+    
+    /**
+     * Agent调用模型（消息列表格式）
+     * @param systemPrompt 系统提示
+     * @param messages 消息列表，格式：[{"role": "user|assistant|system", "content": "..."}]
+     * @param tools 可用工具列表
+     * @param toolCall 是否启用工具调用
+     * @return 模型响应
+     */
+    AgentResponse chat(String systemPrompt, List<Map<String, String>> messages, 
+                       List<Map<String, Object>> tools, boolean toolCall);
+
+    /**
+     * Agent调用模型（带记忆优化）
+     * @param systemPrompt 系统提示
+     * @param messages 消息列表
+     * @param tools 可用工具列表
+     * @param memorySummary 记忆摘要
+     * @param maxTokens 最大token数
+     * @return 模型响应
+     */
+    AgentResponse chatWithMemory(String systemPrompt, List<Map<String, String>> messages,
+                                 List<Map<String, Object>> tools, String memorySummary, int maxTokens);
+
+    /**
+     * Agent流式调用模型
+     * @param systemPrompt 系统提示
+     * @param messages 消息列表
+     * @param tools 可用工具列表
+     * @param callback 流式回调
+     */
+    void chatStream(String systemPrompt, List<Map<String, String>> messages,
+                    List<Map<String, Object>> tools, AgentStreamCallback callback);
+
+    /**
+     * 工具调用结果总结
+     * @param query 用户查询
+     * @param toolResults 工具调用结果列表
+     * @param history 对话历史
+     * @return 总结结果
+     */
+    String summarizeToolResults(String query, List<Map<String, Object>> toolResults, String history);
+
+    /**
+     * 记忆摘要生成
+     * @param messages 消息列表
+     * @param maxLength 最大长度
+     * @return 记忆摘要
+     */
+    String generateMemorySummary(List<Map<String, String>> messages, int maxLength);
+
+    // ==================== 回调接口 ====================
+
     interface LlmStreamCallback {
         void onToken(String token);
         void onComplete();
         void onError(Exception e);
+    }
+
+    interface AgentStreamCallback {
+        void onToken(String token);
+        void onToolCall(Map<String, Object> toolCall);
+        void onComplete();
+        void onError(Exception e);
+    }
+
+    // ==================== 响应模型 ====================
+
+    /**
+     * Agent调用响应
+     */
+    class AgentResponse {
+        private String content;
+        private boolean toolCall;
+        private Map<String, Object> toolCallData;
+        private String finishReason;
+        private int tokenCount;
+        private Map<String, Object> metadata;
+
+        public AgentResponse() {}
+
+        public AgentResponse(String content, boolean toolCall, Map<String, Object> toolCallData) {
+            this.content = content;
+            this.toolCall = toolCall;
+            this.toolCallData = toolCallData;
+        }
+
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
+        public boolean isToolCall() { return toolCall; }
+        public void setToolCall(boolean toolCall) { this.toolCall = toolCall; }
+        public Map<String, Object> getToolCallData() { return toolCallData; }
+        public void setToolCallData(Map<String, Object> toolCallData) { this.toolCallData = toolCallData; }
+        public String getFinishReason() { return finishReason; }
+        public void setFinishReason(String finishReason) { this.finishReason = finishReason; }
+        public int getTokenCount() { return tokenCount; }
+        public void setTokenCount(int tokenCount) { this.tokenCount = tokenCount; }
+        public Map<String, Object> getMetadata() { return metadata; }
+        public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
     }
 
     class ImageProcessingResult {
@@ -122,7 +218,6 @@ public interface LlmService {
         private String imageType;
         private Map<String, Object> metadata;
 
-        // Getters and Setters
         public boolean isSuccess() { return success; }
         public void setSuccess(boolean success) { this.success = success; }
         public String getErrorMessage() { return errorMessage; }
@@ -155,7 +250,6 @@ public interface LlmService {
         private String audioType;
         private Map<String, Object> metadata;
 
-        // Getters and Setters
         public boolean isSuccess() { return success; }
         public void setSuccess(boolean success) { this.success = success; }
         public String getErrorMessage() { return errorMessage; }
@@ -191,7 +285,6 @@ public interface LlmService {
         private String videoType;
         private Map<String, Object> metadata;
 
-        // Getters and Setters
         public boolean isSuccess() { return success; }
         public void setSuccess(boolean success) { this.success = success; }
         public String getErrorMessage() { return errorMessage; }
@@ -223,7 +316,6 @@ public interface LlmService {
         private String summary;
         private Map<String, Object> metadata;
 
-        // Getters and Setters
         public boolean isSuccess() { return success; }
         public void setSuccess(boolean success) { this.success = success; }
         public String getErrorMessage() { return errorMessage; }

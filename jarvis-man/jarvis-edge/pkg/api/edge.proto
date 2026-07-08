@@ -213,35 +213,4 @@ message HardwareCapability {
   map<string, float> performance = 13; // 性能指标
 }
 
-// 边缘服务定义
-service EdgeService {
-  // 健康检查
-  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
-  
-  // 获取服务状态
-  rpc GetStatus(StatusRequest) returns (StatusResponse) {};
-  
-  // 音频流处理（双向流）
-  rpc StreamAudio(stream AudioRequest) returns (stream AudioResponse) {};
-  
-  // 芯片检测
-  rpc DetectHardware(DetectHardwareRequest) returns (DetectHardwareResponse) {};
-  
-  // 模型优化
-  rpc OptimizeModel(OptimizeModelRequest) returns (OptimizeModelResponse) {};
-  
-  // 获取优化模型
-  rpc GetOptimizedModel(GetOptimizedModelRequest) returns (GetOptimizedModelResponse) {};
-  
-  // 运行推理
-  rpc RunInference(RunInferenceRequest) returns (RunInferenceResponse) {};
-  
-  // 能耗管理
-  rpc ManageEnergy(EnergyManagementRequest) returns (EnergyManagementResponse) {};
-  
-  // 硬件加速配置
-  rpc ConfigureHardwareAcceleration(HardwareAccelerationRequest) returns (HardwareAccelerationResponse) {};
-  
-  // 获取硬件能力
-  rpc GetHardwareCapabilities(GetHardwareCapabilitiesRequest) returns (GetHardwareCapabilitiesResponse) {};
-}
+

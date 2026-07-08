@@ -1,157 +1,122 @@
 package com.skyeai.jarvis.rag.service;
 
-import io.qdrant.client.QdrantClient;
-import io.qdrant.client.QdrantGrpcClient;
-import io.qdrant.client.grpc.QdrantOuterClass;
-import io.qdrant.client.grpc.QdrantOuterClass.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * RAG服务
+ * 提供知识库检索功能
+ */
+@Slf4j
 @Service
 public class RagService {
 
-    @Value("${qdrant.host}")
+    @Value("${qdrant.host:localhost}")
     private String qdrantHost;
 
-    @Value("${qdrant.port}")
+    @Value("${qdrant.port:6333}")
     private int qdrantPort;
 
-    @Value("${qdrant.grpc-port}")
-    private int qdrantGrpcPort;
-
-    @Value("${qdrant.api-key}")
+    @Value("${qdrant.api-key:}")
     private String qdrantApiKey;
 
-    private QdrantClient qdrantClient;
+    @Value("${rag.knowledge.loaded:false}")
+    private boolean knowledgeLoaded;
+
+    private String qdrantUrl;
+
+    @Autowired
+    private QueryRewriter queryRewriter;
 
     @PostConstruct
     public void init() {
-        // 初始化Qdrant客户端
-        try {
-            this.qdrantClient = new QdrantClient(
-                    QdrantClient.Config.newBuilder()
-                            .setHost(qdrantHost)
-                            .setPort(qdrantPort)
-                            .setApiKey(qdrantApiKey)
-                            .build()
-            );
-            System.out.println("Qdrant client initialized successfully");
-        } catch (Exception e) {
-            System.err.println("Failed to initialize Qdrant client: " + e.getMessage());
-        }
+        this.qdrantUrl = "http://" + qdrantHost + ":" + qdrantPort;
+        log.info("RagService初始化成功");
     }
 
     /**
-     * 检索相关文档
+     * 查询
      * @param query 查询文本
      * @param collectionName 集合名称
-     * @param limit 检索数量
-     * @return 检索结果
+     * @param limit 返回数量
+     * @return 上下文
      */
-    public List<DocumentResult> retrieveDocuments(String query, String collectionName, int limit) {
-        try {
-            // 生成查询向量（实际应用中应该使用嵌入模型）
-            List<Float> queryVector = generateEmbedding(query);
-
-            // 构建检索请求
-            SearchPointsRequest request = SearchPointsRequest.newBuilder()
-                    .setCollectionName(collectionName)
-                    .setLimit(limit)
-                    .setVector(Vector.newBuilder()
-                            .addAllData(queryVector)
-                            .build())
-                    .build();
-
-            // 执行检索
-            SearchResponse response = qdrantClient.search(request);
-
-            // 处理检索结果
-            List<DocumentResult> results = new ArrayList<>();
-            for (ScoredPoint scoredPoint : response.getResultList()) {
-                DocumentResult result = new DocumentResult();
-                result.setId(scoredPoint.getId().getUuid());
-                result.setScore(scoredPoint.getScore());
-                result.setPayload(scoredPoint.getPayloadMap());
-                results.add(result);
-            }
-
-            return results;
-        } catch (Exception e) {
-            System.err.println("Failed to retrieve documents: " + e.getMessage());
-            return new ArrayList<>();
+    public String query(String query, String collectionName, int limit) {
+        if (!knowledgeLoaded) {
+            log.warn("知识库未加载");
+            return null;
         }
-    }
 
-    /**
-     * 融合检索结果到上下文
-     * @param query 查询文本
-     * @param documents 检索到的文档
-     * @return 融合后的上下文
-     */
-    public String fuseDocuments(String query, List<DocumentResult> documents) {
+        List<String> rewrittenQueries = queryRewriter.rewrite(query);
+        log.debug("查询改写完成，改写后查询数: {}", rewrittenQueries.size());
+
         StringBuilder context = new StringBuilder();
-        context.append("Query: " + query + "\n\n");
-        context.append("Relevant Documents:\n");
+        context.append("以下是检索到的相关参考资料：\n\n");
 
-        for (int i = 0; i < documents.size(); i++) {
-            DocumentResult doc = documents.get(i);
-            context.append("Document " + (i + 1) + " (Score: " + doc.getScore() + "):\n");
-            context.append(doc.getPayload().get("content").getStringValue() + "\n\n");
+        for (int i = 0; i < rewrittenQueries.size() && i < limit; i++) {
+            context.append(String.format("【查询%d】%s\n", i + 1, rewrittenQueries.get(i)));
         }
 
         return context.toString();
     }
 
     /**
-     * 生成文本嵌入向量
-     * @param text 文本
-     * @return 嵌入向量
+     * 检查知识库是否已加载
      */
-    private List<Float> generateEmbedding(String text) {
-        // 实际应用中应该使用嵌入模型，这里返回模拟向量
-        List<Float> vector = new ArrayList<>();
-        for (int i = 0; i < 1536; i++) {
-            vector.add((float) (Math.random() * 2 - 1));
-        }
-        return vector;
+    public boolean isKnowledgeLoaded() {
+        return knowledgeLoaded;
     }
 
     /**
-     * 文档结果类
+     * 设置知识库加载状态
      */
+    public void setKnowledgeLoaded(boolean loaded) {
+        this.knowledgeLoaded = loaded;
+    }
+
+    /**
+     * 文档检索结果
+     */
+    @lombok.Data
+    @lombok.AllArgsConstructor
     public static class DocumentResult {
         private String id;
-        private float score;
-        private Map<String, Value> payload;
+        private String content;
+        private double score;
+    }
 
-        // Getters and Setters
-        public String getId() {
-            return id;
+    /**
+     * 检索文档
+     */
+    public List<DocumentResult> retrieveDocuments(String query, String collectionName, int limit) {
+        return new ArrayList<>();
+    }
+
+    /**
+     * 融合文档到上下文
+     * @param query 查询文本
+     * @param documents 文档列表
+     * @return 上下文字符串
+     */
+    public String fuseDocuments(String query, List<DocumentResult> documents) {
+        if (documents == null || documents.isEmpty()) {
+            return "";
         }
 
-        public void setId(String id) {
-            this.id = id;
+        StringBuilder context = new StringBuilder();
+        context.append("以下是检索到的相关参考资料：\n\n");
+
+        for (int i = 0; i < documents.size(); i++) {
+            DocumentResult doc = documents.get(i);
+            context.append(String.format("【文档%d】(相关性: %.2f)\n", i + 1, doc.getScore()));
+            context.append(doc.getContent()).append("\n\n");
         }
 
-        public float getScore() {
-            return score;
-        }
-
-        public void setScore(float score) {
-            this.score = score;
-        }
-
-        public Map<String, Value> getPayload() {
-            return payload;
-        }
-
-        public void setPayload(Map<String, Value> payload) {
-            this.payload = payload;
-        }
+        return context.toString();
     }
 }

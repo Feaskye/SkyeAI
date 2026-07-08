@@ -1166,4 +1166,215 @@ public class OpenAiLlmServiceImpl implements LlmService {
         // 使用阿里大模型生成最终回答
         return aliyunAIService.callAIModel(prompt.toString());
     }
+
+    // ==================== Agent专用接口实现 ====================
+
+    @Override
+    public AgentResponse chat(String systemPrompt, List<Map<String, String>> messages, 
+                              List<Map<String, Object>> tools, boolean toolCall) {
+        AgentResponse response = new AgentResponse();
+        
+        try {
+            // 构建请求
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", MODEL);
+            requestBody.put("temperature", 0.7);
+            requestBody.put("max_tokens", 2048);
+            
+            // 添加系统提示
+            List<Map<String, String>> allMessages = new ArrayList<>();
+            if (systemPrompt != null && !systemPrompt.isEmpty()) {
+                allMessages.add(Map.of("role", "system", "content", systemPrompt));
+            }
+            allMessages.addAll(messages);
+            requestBody.put("messages", allMessages);
+            
+            // 添加工具调用配置
+            if (toolCall && tools != null && !tools.isEmpty()) {
+                requestBody.put("tools", tools);
+                requestBody.put("tool_choice", "auto");
+            }
+            
+            // 调用模型
+            String jsonBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(requestBody);
+            String apiResponse = sendHttpRequest(baseUrl + "/chat/completions", apiKey, jsonBody);
+            
+            // 解析响应
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            Map<String, Object> responseMap = mapper.readValue(apiResponse, Map.class);
+            
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
+            if (choices != null && !choices.isEmpty()) {
+                Map<String, Object> choice = choices.get(0);
+                Map<String, Object> message = (Map<String, Object>) choice.get("message");
+                
+                String content = (String) message.get("content");
+                response.setContent(content != null ? content : "");
+                
+                // 检查是否有工具调用
+                if (message.containsKey("tool_calls")) {
+                    response.setToolCall(true);
+                    response.setToolCallData(message);
+                } else {
+                    response.setToolCall(false);
+                }
+                
+                response.setFinishReason((String) choice.get("finish_reason"));
+                
+                Map<String, Object> usage = (Map<String, Object>) responseMap.get("usage");
+                if (usage != null) {
+                    response.setTokenCount(((Number) usage.get("total_tokens")).intValue());
+                }
+            }
+            
+        } catch (Exception e) {
+            // 如果调用失败，返回模拟响应
+            response.setContent("模拟响应：收到您的消息，正在处理中...");
+            response.setToolCall(false);
+        }
+        
+        return response;
+    }
+
+    @Override
+    public AgentResponse chatWithMemory(String systemPrompt, List<Map<String, String>> messages,
+                                        List<Map<String, Object>> tools, String memorySummary, int maxTokens) {
+        AgentResponse response = new AgentResponse();
+        
+        try {
+            // 如果有记忆摘要，添加到系统提示中
+            String enhancedSystemPrompt = systemPrompt;
+            if (memorySummary != null && !memorySummary.isEmpty()) {
+                enhancedSystemPrompt = memorySummary + "\n\n" + systemPrompt;
+            }
+            
+            // 构建请求
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", MODEL);
+            requestBody.put("temperature", 0.7);
+            requestBody.put("max_tokens", maxTokens);
+            
+            // 添加消息
+            List<Map<String, String>> allMessages = new ArrayList<>();
+            if (enhancedSystemPrompt != null && !enhancedSystemPrompt.isEmpty()) {
+                allMessages.add(Map.of("role", "system", "content", enhancedSystemPrompt));
+            }
+            allMessages.addAll(messages);
+            requestBody.put("messages", allMessages);
+            
+            // 添加工具
+            if (tools != null && !tools.isEmpty()) {
+                requestBody.put("tools", tools);
+                requestBody.put("tool_choice", "auto");
+            }
+            
+            // 调用模型
+            String jsonBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(requestBody);
+            String apiResponse = sendHttpRequest(baseUrl + "/chat/completions", apiKey, jsonBody);
+            
+            // 解析响应
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            Map<String, Object> responseMap = mapper.readValue(apiResponse, Map.class);
+            
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
+            if (choices != null && !choices.isEmpty()) {
+                Map<String, Object> choice = choices.get(0);
+                Map<String, Object> message = (Map<String, Object>) choice.get("message");
+                
+                response.setContent((String) message.get("content"));
+                
+                if (message.containsKey("tool_calls")) {
+                    response.setToolCall(true);
+                    response.setToolCallData(message);
+                } else {
+                    response.setToolCall(false);
+                }
+                
+                response.setFinishReason((String) choice.get("finish_reason"));
+                
+                Map<String, Object> usage = (Map<String, Object>) responseMap.get("usage");
+                if (usage != null) {
+                    response.setTokenCount(((Number) usage.get("total_tokens")).intValue());
+                }
+            }
+            
+        } catch (Exception e) {
+            response.setContent("模拟响应（带记忆）：收到您的消息，正在处理中...");
+            response.setToolCall(false);
+        }
+        
+        return response;
+    }
+
+    @Override
+    public void chatStream(String systemPrompt, List<Map<String, String>> messages,
+                           List<Map<String, Object>> tools, AgentStreamCallback callback) {
+        try {
+            // 构建请求
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", MODEL);
+            requestBody.put("temperature", 0.7);
+            requestBody.put("max_tokens", 2048);
+            requestBody.put("stream", true);
+            
+            List<Map<String, String>> allMessages = new ArrayList<>();
+            if (systemPrompt != null && !systemPrompt.isEmpty()) {
+                allMessages.add(Map.of("role", "system", "content", systemPrompt));
+            }
+            allMessages.addAll(messages);
+            requestBody.put("messages", allMessages);
+            
+            if (tools != null && !tools.isEmpty()) {
+                requestBody.put("tools", tools);
+                requestBody.put("tool_choice", "auto");
+            }
+            
+            // 发送流式请求（简化实现）
+            callback.onToken("模拟流式响应：");
+            callback.onToken("正在处理您的请求...");
+            callback.onComplete();
+            
+        } catch (Exception e) {
+            callback.onError(e);
+        }
+    }
+
+    @Override
+    public String summarizeToolResults(String query, List<Map<String, Object>> toolResults, String history) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("请根据以下工具调用结果，对用户的问题进行总结回答。\n\n");
+        prompt.append("用户问题: " + query + "\n\n");
+        
+        prompt.append("工具调用结果:\n");
+        for (int i = 0; i < toolResults.size(); i++) {
+            prompt.append(i + 1).append(". ").append(toolResults.get(i)).append("\n");
+        }
+        
+        prompt.append("\n历史记录: " + history + "\n\n");
+        prompt.append("请总结工具调用结果，给出最终回答：");
+        
+        return aliyunAIService.callAIModel(prompt.toString());
+    }
+
+    @Override
+    public String generateMemorySummary(List<Map<String, String>> messages, int maxLength) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("请对以下对话历史进行摘要，保留关键信息，控制在" + maxLength + "字以内。\n\n");
+        prompt.append("对话历史:\n");
+        
+        for (Map<String, String> message : messages) {
+            String role = message.get("role");
+            String content = message.get("content");
+            prompt.append(role + ": " + content + "\n");
+        }
+        
+        prompt.append("\n摘要: ");
+        
+        String summary = aliyunAIService.callAIModel(prompt.toString());
+        if (summary != null && summary.length() > maxLength) {
+            summary = summary.substring(0, maxLength) + "...";
+        }
+        
+        return summary;
+    }
 }

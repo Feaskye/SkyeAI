@@ -44,16 +44,16 @@ func (s *EdgeServiceImpl) StreamAudio(stream EdgeService_StreamAudioServer) erro
 			log.Printf("StreamAudio receive error: %v", err)
 			return err
 		}
-		
-		log.Printf("Received audio data: %d bytes, format: %s, sample rate: %d", 
+
+		log.Printf("Received audio data: %d bytes, format: %s, sample rate: %d",
 			len(req.AudioData), req.Format, req.SampleRate)
-		
+
 		// 返回模拟响应
 		resp := &AudioResponse{
 			Result:     "模拟识别结果",
 			Confidence: 0.95,
 		}
-		
+
 		if err := stream.Send(resp); err != nil {
 			log.Printf("StreamAudio send error: %v", err)
 			return err
@@ -66,13 +66,13 @@ func (s *EdgeServiceImpl) DetectHardware(ctx context.Context, req *DetectHardwar
 	log.Println("DetectHardware called")
 	// 模拟实现：返回硬件信息
 	return &DetectHardwareResponse{
-		ChipType:        "CPU",
-		ChipModel:       "Intel Core i7-11700K",
-		Vendor:          "Intel",
-		Cores:           8,
-		Memory:          16 * 1024 * 1024 * 1024, // 16GB
-		SupportsInt8:    true,
-		SupportsFp16:    true,
+		ChipType:         "CPU",
+		ChipModel:        "Intel Core i7-11700K",
+		Vendor:           "Intel",
+		Cores:            8,
+		Memory:           16 * 1024 * 1024 * 1024, // 16GB
+		SupportsInt8:     true,
+		SupportsFp16:     true,
 		SupportsTensorrt: false,
 		SupportsOpenvino: true,
 		Details: map[string]string{
@@ -112,10 +112,10 @@ func (s *EdgeServiceImpl) GetOptimizedModel(ctx context.Context, req *GetOptimiz
 		ModelVersion:      "1.0.0",
 		OptimizationLevel: req.OptimizationLevel,
 		ModelInfo: map[string]string{
-			"model_type":     "vision",
-			"input_shape":    "[1, 3, 224, 224]",
-			"output_shape":   "[1, 1000]",
-			"quantization":   "INT8",
+			"model_type":   "vision",
+			"input_shape":  "[1, 3, 224, 224]",
+			"output_shape": "[1, 1000]",
+			"quantization": "INT8",
 		},
 	}, nil
 }
@@ -123,7 +123,7 @@ func (s *EdgeServiceImpl) GetOptimizedModel(ctx context.Context, req *GetOptimiz
 // RunInference 实现运行推理接口
 func (s *EdgeServiceImpl) RunInference(ctx context.Context, req *RunInferenceRequest) (*RunInferenceResponse, error) {
 	log.Printf("RunInference called for model: %s", req.ModelPath)
-	
+
 	// 处理硬件加速
 	accelerationType := "none"
 	if req.EnableHardwareAcceleration {
@@ -133,15 +133,15 @@ func (s *EdgeServiceImpl) RunInference(ctx context.Context, req *RunInferenceReq
 		}
 		log.Printf("启用硬件加速: %s", accelerationType)
 	}
-	
+
 	// 模拟实现：返回推理结果
 	return &RunInferenceResponse{
-		Success:       true,
+		Success: true,
 		Outputs: map[string][]byte{
 			"output": []byte{0x01, 0x02, 0x03, 0x04},
 		},
-		InferenceTime:    12.5,
-		UsedAcceleration: accelerationType,
+		InferenceTime:     12.5,
+		UsedAcceleration:  accelerationType,
 		EnergyConsumption: 5.2, // 模拟能耗
 	}, nil
 }
@@ -149,16 +149,16 @@ func (s *EdgeServiceImpl) RunInference(ctx context.Context, req *RunInferenceReq
 // ManageEnergy 实现能耗管理接口
 func (s *EdgeServiceImpl) ManageEnergy(ctx context.Context, req *EnergyManagementRequest) (*EnergyManagementResponse, error) {
 	log.Printf("ManageEnergy called with mode: %s, max power budget: %f", req.Mode, req.MaxPowerBudget)
-	
+
 	// 模拟实现：返回能耗管理结果
 	return &EnergyManagementResponse{
-		Success:           true,
-		CurrentMode:       req.Mode,
+		Success:            true,
+		CurrentMode:        req.Mode,
 		CurrentPowerBudget: req.MaxPowerBudget,
-		EnergyStatistics: map[string]float64{
-			"total_energy":     100.5,
-			"average_power":    50.2,
-			"peak_power":       75.8,
+		EnergyStatistics: map[string]float32{
+			"total_energy":         100.5,
+			"average_power":        50.2,
+			"peak_power":           75.8,
 			"energy_per_inference": 2.5,
 		},
 	}, nil
@@ -167,7 +167,7 @@ func (s *EdgeServiceImpl) ManageEnergy(ctx context.Context, req *EnergyManagemen
 // ConfigureHardwareAcceleration 实现硬件加速配置接口
 func (s *EdgeServiceImpl) ConfigureHardwareAcceleration(ctx context.Context, req *HardwareAccelerationRequest) (*HardwareAccelerationResponse, error) {
 	log.Printf("ConfigureHardwareAcceleration called for type: %s, enable: %t", req.AccelerationType, req.Enable)
-	
+
 	// 模拟实现：返回硬件加速配置结果
 	return &HardwareAccelerationResponse{
 		Success:          true,
@@ -180,53 +180,53 @@ func (s *EdgeServiceImpl) ConfigureHardwareAcceleration(ctx context.Context, req
 // GetHardwareCapabilities 实现获取硬件能力接口
 func (s *EdgeServiceImpl) GetHardwareCapabilities(ctx context.Context, req *GetHardwareCapabilitiesRequest) (*GetHardwareCapabilitiesResponse, error) {
 	log.Printf("GetHardwareCapabilities called with detailed: %t", req.Detailed)
-	
+
 	// 模拟实现：返回硬件能力列表
 	capabilities := []*HardwareCapability{
 		{
-			Type:            "CPU",
-			Model:           "Intel Core i7-11700K",
-			Vendor:          "Intel",
-			Cores:           8,
-			Memory:          16 * 1024 * 1024 * 1024, // 16GB
-			SupportsInt8:    true,
-			SupportsFp16:    true,
+			Type:             "CPU",
+			Model:            "Intel Core i7-11700K",
+			Vendor:           "Intel",
+			Cores:            8,
+			Memory:           16 * 1024 * 1024 * 1024, // 16GB
+			SupportsInt8:     true,
+			SupportsFp16:     true,
 			SupportsTensorrt: false,
 			SupportsOpenvino: true,
-			SupportsCuda:    false,
-			SupportsNnapi:   false,
+			SupportsCuda:     false,
+			SupportsNnapi:    false,
 			Features: map[string]string{
-				"architecture": "x86_64",
+				"architecture":    "x86_64",
 				"instruction_set": "AVX2",
 			},
-			Performance: map[string]float64{
-				"compute_score": 85.5,
+			Performance: map[string]float32{
+				"compute_score":    85.5,
 				"memory_bandwidth": 51.2,
 			},
 		},
 		{
-			Type:            "GPU",
-			Model:           "NVIDIA RTX 3080",
-			Vendor:          "NVIDIA",
-			Cores:           8704,
-			Memory:          10 * 1024 * 1024 * 1024, // 10GB
-			SupportsInt8:    true,
-			SupportsFp16:    true,
+			Type:             "GPU",
+			Model:            "NVIDIA RTX 3080",
+			Vendor:           "NVIDIA",
+			Cores:            8704,
+			Memory:           10 * 1024 * 1024 * 1024, // 10GB
+			SupportsInt8:     true,
+			SupportsFp16:     true,
 			SupportsTensorrt: true,
 			SupportsOpenvino: false,
-			SupportsCuda:    true,
-			SupportsNnapi:   false,
+			SupportsCuda:     true,
+			SupportsNnapi:    false,
 			Features: map[string]string{
 				"architecture": "Ampere",
 				"cuda_version": "11.7",
 			},
-			Performance: map[string]float64{
-				"compute_score": 98.2,
+			Performance: map[string]float32{
+				"compute_score":    98.2,
 				"memory_bandwidth": 760.3,
 			},
 		},
 	}
-	
+
 	return &GetHardwareCapabilitiesResponse{
 		Success:      true,
 		Capabilities: capabilities,
