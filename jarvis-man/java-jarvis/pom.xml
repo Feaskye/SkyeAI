@@ -247,7 +247,7 @@
                     <source>17</source>
                     <target>17</target>
                     <fork>true</fork>
-                    <executable>D:\Program Files\JetBrains\javajdks\temurin-17.0.17\bin\javac</executable>
+                    <executable>${env.JAVA_HOME}/bin/javac</executable>
                 </configuration>
             </plugin>
         </plugins>

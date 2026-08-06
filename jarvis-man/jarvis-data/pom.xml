@@ -7,7 +7,7 @@
     <groupId>com.skyeai</groupId>
     <artifactId>jarvis-data</artifactId>
     <version>1.0.0</version>
-    <name>Jarvis Data Service</name>
+    <name>jarvis-data</name>
     <description>Data access service for Jarvis AI</description>
 
     <parent>
