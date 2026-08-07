@@ -16,6 +16,7 @@ import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -32,7 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Legacy LLM 实现：基于手写 HttpClient + DashScope SDK
+ * v10 Phase 6：仅当 jarvis.llm.impl=legacy 时激活，默认使用 SpringAiLlmServiceImpl
+ */
 @Service
+@ConditionalOnProperty(name = "jarvis.llm.impl", havingValue = "legacy")
 public class OpenAiLlmServiceImpl implements LlmService {
 
     @Value("${llm.openai.api-key}")

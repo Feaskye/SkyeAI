@@ -7,7 +7,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * 边缘服务定义
  * </pre>
  */
-@javax.annotation.Generated(
+@jakarta.annotation.Generated(
     value = "by gRPC proto compiler (version 1.54.0)",
     comments = "Source: edge.proto")
 @io.grpc.stub.annotations.GrpcGenerated

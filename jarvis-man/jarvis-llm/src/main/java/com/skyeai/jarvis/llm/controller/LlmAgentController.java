@@ -10,10 +10,11 @@ import java.util.Map;
 /**
  * Agent专用控制器
  * 提供Agent调用LLM服务的接口
+ * v10 修复：重命名 AgentController → LlmAgentController，避免与 SAA Studio 的 AgentController bean 名称冲突
  */
 @RestController
 @RequestMapping("/api/llm/agent")
-public class AgentController {
+public class LlmAgentController {
 
     @Autowired
     private LlmService llmService;
@@ -27,7 +28,7 @@ public class AgentController {
         List<Map<String, String>> messages = (List<Map<String, String>>) request.get("messages");
         List<Map<String, Object>> tools = (List<Map<String, Object>>) request.getOrDefault("tools", List.of());
         boolean toolCall = (Boolean) request.getOrDefault("toolCall", false);
-        
+
         return llmService.chat(systemPrompt, messages, tools, toolCall);
     }
 
@@ -41,7 +42,7 @@ public class AgentController {
         List<Map<String, Object>> tools = (List<Map<String, Object>>) request.getOrDefault("tools", List.of());
         String memorySummary = (String) request.getOrDefault("memorySummary", "");
         int maxTokens = (Integer) request.getOrDefault("maxTokens", 2048);
-        
+
         return llmService.chatWithMemory(systemPrompt, messages, tools, memorySummary, maxTokens);
     }
 
@@ -53,7 +54,7 @@ public class AgentController {
         String query = (String) request.get("query");
         List<Map<String, Object>> toolResults = (List<Map<String, Object>>) request.get("toolResults");
         String history = (String) request.getOrDefault("history", "");
-        
+
         return llmService.summarizeToolResults(query, toolResults, history);
     }
 
@@ -64,7 +65,7 @@ public class AgentController {
     public String generateMemorySummary(@RequestBody Map<String, Object> request) {
         List<Map<String, String>> messages = (List<Map<String, String>>) request.get("messages");
         int maxLength = (Integer) request.getOrDefault("maxLength", 500);
-        
+
         return llmService.generateMemorySummary(messages, maxLength);
     }
 }

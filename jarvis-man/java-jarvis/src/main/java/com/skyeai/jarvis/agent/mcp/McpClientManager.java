@@ -1,8 +1,10 @@
 package com.skyeai.jarvis.agent.mcp;
 
-import com.skyeai.jarvis.agent.tool.ToolCallback;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyeai.jarvis.agent.tool.ToolRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,20 +69,32 @@ public class McpClientManager {
         }
     }
     
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     /**
      * 注册MCP工具
+     * v10 改造：使用 Spring AI FunctionToolCallback
      */
     private void registerMcpTools(List<McpTool> tools, String serverId) {
         for (McpTool tool : tools) {
-            ToolCallback callback = ToolCallback.builder()
-                    .name(tool.getName())
+            ToolCallback callback = FunctionToolCallback.builder(
+                    tool.getName(),
+                    (String jsonInput) -> {
+                        try {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> params = OBJECT_MAPPER.readValue(jsonInput, Map.class);
+                            return callMcpTool(serverId, tool, params);
+                        } catch (Exception e) {
+                            log.error("解析 MCP 工具入参失败: {}", jsonInput, e);
+                            return "MCP工具参数解析失败";
+                        }
+                    })
                     .description(tool.getDescription())
                     .inputSchema(tool.getInputSchema())
-                    .function(params -> callMcpTool(serverId, tool, params))
-                    .type("mcp:" + serverId)
+                    .inputType(String.class)
                     .build();
-            
-            toolRegistry.registerTool(callback);
+
+            toolRegistry.registerTool(callback, "mcp:" + serverId);
             log.debug("注册MCP工具: {} from {}", tool.getName(), serverId);
         }
     }

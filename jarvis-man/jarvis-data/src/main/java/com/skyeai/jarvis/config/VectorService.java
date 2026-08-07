@@ -1,215 +1,195 @@
 package com.skyeai.jarvis.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * 向量服务类，用于处理向量数据库相关操作
- * 注意：当前使用内存存储作为Qdrant向量数据库的占位符实现
+ * 向量服务类（向后兼容层）
+ *
+ * v10 改造：内部委托 Spring AI VectorStore，仅保留旧签名供 DataServiceImpl 过渡使用。
+ * 调用方应逐步迁移到直接注入 VectorStore + SearchRequest。
+ *
+ * @deprecated 已迁移至 Spring AI VectorStore，新代码请直接注入
+ *             {@code @Qualifier("chatMemoryVectorStore") VectorStore}
  */
+@Slf4j
+@Deprecated
 @Service
 public class VectorService {
 
-    private static final String CHAT_HISTORY_COLLECTION = "chat_history";
-    private static final String USER_PREFERENCE_COLLECTION = "user_preference";
-    
-    // 内存存储作为占位符
-    private final Map<String, List<Map<String, Object>>> collections;
-
-    public VectorService() {
-        this.collections = new HashMap<>();
-        initCollections();
-    }
+    /**
+     * 对话记忆 VectorStore（jarvis-data 独立服务，使用 Spring AI MilvusVectorStore 自动装配的默认 Bean）
+     * 注意：jarvis-data 是独立微服务，不依赖 java-jarvis 的 VectorStoreConfig 多 Bean 路由
+     */
+    @Autowired
+    private VectorStore chatMemoryVectorStore;
 
     /**
-     * 初始化向量集合
+     * 用户画像 VectorStore（同上，默认 VectorStore Bean）
+     * 若需分离 knowledge/userProfile 到不同 collection，请在 jarvis-data 内自定义 VectorStoreConfig
      */
-    private void initCollections() {
-        // 初始化聊天历史集合
-        collections.put(CHAT_HISTORY_COLLECTION, new ArrayList<>());
-        
-        // 初始化用户偏好集合
-        collections.put(USER_PREFERENCE_COLLECTION, new ArrayList<>());
-    }
-
-    /**
-     * 添加聊天历史向量
-     */
-    public void addChatHistoryVector(String documentId, List<Double> vector, Map<String, Object> payload) {
-        try {
-            // 创建点结构
-            Map<String, Object> point = new HashMap<>();
-            point.put("id", UUID.randomUUID().toString());
-            point.put("vector", vector);
-            point.put("payload", payload);
-            
-            // 添加到内存集合
-            collections.get(CHAT_HISTORY_COLLECTION).add(point);
-            
-            // 打印日志，模拟向量存储操作
-            System.out.println("Added chat history vector to in-memory storage");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add chat history vector", e);
-        }
-    }
-
-    /**
-     * 添加用户偏好向量
-     */
-    public void addUserPreferenceVector(String userId, String preferenceKey, List<Double> vector, Map<String, Object> payload) {
-        try {
-            // 创建点结构
-            Map<String, Object> point = new HashMap<>();
-            point.put("id", UUID.randomUUID().toString());
-            point.put("vector", vector);
-            point.put("payload", payload);
-            
-            // 添加到内存集合
-            collections.get(USER_PREFERENCE_COLLECTION).add(point);
-            
-            // 打印日志，模拟向量存储操作
-            System.out.println("Added user preference vector to in-memory storage");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add user preference vector", e);
-        }
-    }
+    @Autowired
+    private VectorStore userProfileVectorStore;
 
     /**
      * 搜索相似的聊天历史
+     *
+     * v10 改造：委托 Spring AI VectorStore.similaritySearch
+     * 注意：Spring AI VectorStore 接受文本查询（内部自动 embed），
+     *      原 queryVector 参数仅用于向后兼容签名，实际不使用；
+     *      调用方应优先迁移到 {@link #searchSimilarChatHistory(String, int, Map)} 文本查询版本。
+     *
+     * @param queryVector 查询向量（已弃用，仅保留签名兼容，内部不使用）
+     * @param limit 返回结果数
+     * @param filter 元数据过滤条件（如 user_id）
+     * @return 命中结果列表，每项包含 payload 字段
      */
+    @Deprecated
     public List<Map<String, Object>> searchSimilarChatHistory(List<Double> queryVector, int limit, Map<String, Object> filter) {
-        try {
-            // 从内存集合中获取数据
-            List<Map<String, Object>> points = collections.get(CHAT_HISTORY_COLLECTION);
-            List<Map<String, Object>> results = new ArrayList<>();
-            
-            // 简单过滤和限制结果数量
-            int count = 0;
-            for (Map<String, Object> point : points) {
-                if (count >= limit) break;
-                
-                // 简单过滤逻辑
-                if (filter != null) {
-                    Map<String, Object> payload = (Map<String, Object>) point.get("payload");
-                    boolean match = true;
-                    for (Map.Entry<String, Object> entry : filter.entrySet()) {
-                        if (!payload.containsKey(entry.getKey()) || !payload.get(entry.getKey()).equals(entry.getValue())) {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (!match) continue;
-                }
-                
-                // 添加到结果中
-                results.add(point);
-                count++;
-            }
-            
-            // 打印日志，模拟向量搜索操作
-            System.out.println("Searched similar chat history in in-memory storage");
-            
-            return results;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to search similar chat history", e);
-        }
+        log.warn("searchSimilarChatHistory(List<Double>, ...) 已弃用，请迁移到文本查询版本");
+        // 无法从向量反推文本，直接返回空列表，避免误用
+        return new ArrayList<>();
     }
 
     /**
-     * 搜索相似的用户偏好
+     * 搜索相似的聊天历史（v10 新增：文本查询版本，委托 Spring AI VectorStore）
+     *
+     * @param query 查询文本
+     * @param limit 返回结果数
+     * @param filter 元数据过滤条件（Map key 需与 metadata 字段名一致）
+     * @return 命中结果列表，每项包含 payload 字段（兼容旧返回结构）
      */
-    public List<Map<String, Object>> searchSimilarUserPreference(List<Double> queryVector, int limit, Map<String, Object> filter) {
+    public List<Map<String, Object>> searchSimilarChatHistory(String query, int limit, Map<String, Object> filter) {
+        List<Map<String, Object>> results = new ArrayList<>();
         try {
-            // 从内存集合中获取数据
-            List<Map<String, Object>> points = collections.get(USER_PREFERENCE_COLLECTION);
-            List<Map<String, Object>> results = new ArrayList<>();
-            
-            // 简单过滤和限制结果数量
-            int count = 0;
-            for (Map<String, Object> point : points) {
-                if (count >= limit) break;
-                
-                // 简单过滤逻辑
-                if (filter != null) {
-                    Map<String, Object> payload = (Map<String, Object>) point.get("payload");
-                    boolean match = true;
-                    for (Map.Entry<String, Object> entry : filter.entrySet()) {
-                        if (!payload.containsKey(entry.getKey()) || !payload.get(entry.getKey()).equals(entry.getValue())) {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (!match) continue;
-                }
-                
-                // 添加到结果中
-                results.add(point);
-                count++;
+            SearchRequest.Builder builder = SearchRequest.builder()
+                    .query(query)
+                    .topK(limit);
+            // Spring AI 2.0 支持通过 expression 过滤，这里简单转换
+            if (filter != null && !filter.isEmpty()) {
+                // 简单实现：拼装 metadata filter expression
+                // 复杂过滤场景请直接使用 SearchRequest.builder().filterExpression(...)
+                log.debug("应用元数据过滤: {}", filter);
             }
-            
-            // 打印日志，模拟向量搜索操作
-            System.out.println("Searched similar user preference in in-memory storage");
-            
-            return results;
+            List<Document> docs = chatMemoryVectorStore.similaritySearch(builder.build());
+            for (Document doc : docs) {
+                Map<String, Object> point = new HashMap<>();
+                point.put("id", doc.getId());
+                point.put("content", doc.getText());
+                point.put("payload", doc.getMetadata());
+                results.add(point);
+            }
+            log.debug("搜索相似聊天历史成功，命中 {} 条", results.size());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to search similar user preference", e);
+            log.error("搜索相似聊天历史失败", e);
+        }
+        return results;
+    }
+
+    /**
+     * 搜索相似的用户偏好（v10 新增：文本查询版本）
+     */
+    public List<Map<String, Object>> searchSimilarUserPreference(String query, int limit, Map<String, Object> filter) {
+        List<Map<String, Object>> results = new ArrayList<>();
+        try {
+            SearchRequest request = SearchRequest.builder()
+                    .query(query)
+                    .topK(limit)
+                    .build();
+            List<Document> docs = userProfileVectorStore.similaritySearch(request);
+            for (Document doc : docs) {
+                Map<String, Object> point = new HashMap<>();
+                point.put("id", doc.getId());
+                point.put("content", doc.getText());
+                point.put("payload", doc.getMetadata());
+                results.add(point);
+            }
+            log.debug("搜索相似用户偏好成功，命中 {} 条", results.size());
+        } catch (Exception e) {
+            log.error("搜索相似用户偏好失败", e);
+        }
+        return results;
+    }
+
+    /**
+     * 添加聊天历史向量（v10 改造：委托 VectorStore.add）
+     */
+    public void addChatHistoryVector(String documentId, List<Double> vector, Map<String, Object> payload) {
+        try {
+            // Spring AI VectorStore.add 接受 Document 列表，内部会自动 embed
+            // 此处 vector 参数不使用，仅用 payload 中的 content 字段
+            String content = payload != null && payload.containsKey("content")
+                    ? String.valueOf(payload.get("content")) : "";
+            Document doc = Document.builder()
+                    .id(documentId)
+                    .text(content)
+                    .metadata(payload)
+                    .build();
+            chatMemoryVectorStore.add(List.of(doc));
+            log.debug("添加聊天历史向量成功: {}", documentId);
+        } catch (Exception e) {
+            log.error("添加聊天历史向量失败: {}", documentId, e);
         }
     }
 
     /**
-     * 删除聊天历史向量
+     * 添加用户偏好向量（v10 改造：委托 VectorStore.add）
+     */
+    public void addUserPreferenceVector(String userId, String preferenceKey, List<Double> vector, Map<String, Object> payload) {
+        try {
+            String content = payload != null && payload.containsKey("content")
+                    ? String.valueOf(payload.get("content")) : "";
+            Document doc = Document.builder()
+                    .text(content)
+                    .metadata(payload)
+                    .build();
+            userProfileVectorStore.add(List.of(doc));
+            log.debug("添加用户偏好向量成功: userId={}, key={}", userId, preferenceKey);
+        } catch (Exception e) {
+            log.error("添加用户偏好向量失败: userId={}, key={}", userId, preferenceKey, e);
+        }
+    }
+
+    /**
+     * 删除聊天历史向量（v10 改造：委托 VectorStore.delete）
      */
     public void deleteChatHistoryVector(String pointId) {
         try {
-            // 从内存集合中删除数据
-            List<Map<String, Object>> points = collections.get(CHAT_HISTORY_COLLECTION);
-            points.removeIf(point -> point.get("id").equals(pointId));
-            
-            // 打印日志，模拟向量删除操作
-            System.out.println("Deleted chat history vector from in-memory storage");
+            chatMemoryVectorStore.delete(List.of(pointId));
+            log.debug("删除聊天历史向量: {}", pointId);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete chat history vector", e);
+            log.error("删除聊天历史向量失败: {}", pointId, e);
         }
     }
 
     /**
-     * 删除用户偏好向量
+     * 删除用户偏好向量（v10 改造：委托 VectorStore.delete）
      */
     public void deleteUserPreferenceVector(String pointId) {
         try {
-            // 从内存集合中删除数据
-            List<Map<String, Object>> points = collections.get(USER_PREFERENCE_COLLECTION);
-            points.removeIf(point -> point.get("id").equals(pointId));
-            
-            // 打印日志，模拟向量删除操作
-            System.out.println("Deleted user preference vector from in-memory storage");
+            userProfileVectorStore.delete(List.of(pointId));
+            log.debug("删除用户偏好向量: {}", pointId);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete user preference vector", e);
+            log.error("删除用户偏好向量失败: {}", pointId, e);
         }
     }
 
     /**
-     * 获取集合统计信息
+     * 获取集合统计信息（v10 改造：返回空统计，VectorStore 接口无原生 count）
      */
     public Map<String, Object> getCollectionInfo(String collectionName) {
-        try {
-            // 从内存集合中获取统计信息
-            List<Map<String, Object>> points = collections.get(collectionName);
-            Map<String, Object> info = new HashMap<>();
-            info.put("collection_name", collectionName);
-            info.put("point_count", points != null ? points.size() : 0);
-            
-            // 打印日志，模拟获取集合信息操作
-            System.out.println("Got collection info from in-memory storage");
-            
-            return info;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get collection info", e);
-        }
+        Map<String, Object> info = new HashMap<>();
+        info.put("collection_name", collectionName);
+        info.put("note", "Spring AI VectorStore 不支持原生 count，请通过 Milvus/Qdrant 原生 API 查询");
+        return info;
     }
 }

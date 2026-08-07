@@ -1,9 +1,11 @@
 package com.skyeai.jarvis.agent.tool.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyeai.jarvis.agent.tool.InnerTool;
-import com.skyeai.jarvis.agent.tool.ToolCallback;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -74,16 +76,30 @@ public class WeatherTool implements InnerTool {
         log.info("WeatherTool初始化完成，API启用: {}", apiEnabled);
     }
     
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Override
     public List<ToolCallback> loadToolCallbacks() {
-        ToolCallback weatherTool = ToolCallback.builder()
-                .name("get_weather")
+        ToolCallback weatherTool = FunctionToolCallback.builder("get_weather", this::fetchWeatherFromJson)
                 .description("获取指定城市的当前天气信息")
                 .inputSchema(INPUT_SCHEMA)
-                .function(this::fetchWeather)
-                .type("weather")
+                .inputType(String.class)
                 .build();
         return List.of(weatherTool);
+    }
+
+    /**
+     * Spring AI FunctionToolCallback 入口：接收 JSON 字符串参数
+     */
+    private String fetchWeatherFromJson(String toolInput) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> params = OBJECT_MAPPER.readValue(toolInput, Map.class);
+            return fetchWeather(params);
+        } catch (Exception e) {
+            log.error("解析天气工具入参失败: {}", toolInput, e);
+            return "天气查询参数解析失败";
+        }
     }
     
     @Override

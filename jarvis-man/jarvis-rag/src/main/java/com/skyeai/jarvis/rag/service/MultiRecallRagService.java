@@ -3,11 +3,9 @@ package com.skyeai.jarvis.rag.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,27 +23,17 @@ public class MultiRecallRagService {
      */
     private static final int RRF_CONSTANT_K = 60;
 
-    @Value("${qdrant.host:localhost}")
-    private String qdrantHost;
-
-    @Value("${qdrant.port:6333}")
-    private int qdrantPort;
-
-    @Value("${qdrant.api-key:}")
-    private String qdrantApiKey;
-
     @Value("${rag.knowledge.loaded:false}")
     private boolean knowledgeLoaded;
-
-    @Value("${llm.service.url:http://localhost:8081}")
-    private String llmServiceUrl;
 
     @Value("${rag.embedding.enabled:true}")
     private boolean embeddingEnabled;
 
-    private WebClient qdrantWebClient;
+    @Autowired
+    private org.springframework.ai.vectorstore.VectorStore vectorStore;
 
-    private WebClient llmWebClient;
+    @Autowired
+    private org.springframework.ai.embedding.EmbeddingModel embeddingModel;
 
     @Autowired
     private QueryRewriter queryRewriter;
@@ -61,20 +49,6 @@ public class MultiRecallRagService {
 
     @PostConstruct
     public void init() {
-        // 初始化 Qdrant WebClient
-        this.qdrantWebClient = WebClient.builder()
-                .baseUrl("http://" + qdrantHost + ":" + qdrantPort)
-                .defaultHeader("api-key", qdrantApiKey)
-                .build();
-        log.info("Qdrant WebClient初始化成功");
-
-        // 初始化 LLM 服务 WebClient（用于嵌入生成）
-        this.llmWebClient = WebClient.builder()
-                .baseUrl(llmServiceUrl)
-                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
-                .build();
-        log.info("LLM服务WebClient初始化成功，地址: {}", llmServiceUrl);
-
         // 初始化关键词存储（示例数据）
         initializeKeywordStore();
     }
@@ -154,50 +128,28 @@ public class MultiRecallRagService {
     }
 
     /**
-     * 语义向量检索
+     * 语义向量检索（委托 Spring AI VectorStore）
      */
     private List<Reranker.RerankedDocument> vectorSearch(String query, String collectionName, int limit) {
         List<Reranker.RerankedDocument> results = new ArrayList<>();
-
         try {
-            // 生成查询向量
-            List<Float> queryVector = generateEmbedding(query);
-
-            // 构建检索请求
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("vector", queryVector);
-            requestBody.put("limit", limit);
-            requestBody.put("withPayload", true);
-
-            // 调用Qdrant REST API
-            Map<String, Object> response = qdrantWebClient.post()
-                    .uri("/collections/{collection}/points/search", collectionName)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(Map.class)
-                    .block();
-
-            // 处理结果
-            if (response != null && response.containsKey("result")) {
-                List<Map<String, Object>> resultList = (List<Map<String, Object>>) response.get("result");
-                int rank = 0;
-                for (Map<String, Object> point : resultList) {
-                    String id = String.valueOf(point.get("id"));
-                    double score = ((Number) point.get("score")).doubleValue();
-
-                    Map<String, Object> payload = (Map<String, Object>) point.get("payload");
-                    String content = payload != null ? String.valueOf(payload.getOrDefault("content", "")) : "";
-
-                    Reranker.RerankedDocument doc = new Reranker.RerankedDocument(id, content, score, rank++);
-                    results.add(doc);
-                }
+            org.springframework.ai.vectorstore.SearchRequest request =
+                org.springframework.ai.vectorstore.SearchRequest.builder()
+                    .query(query)
+                    .topK(limit)
+                    .build();
+            List<org.springframework.ai.document.Document> docs = vectorStore.similaritySearch(request);
+            int rank = 0;
+            for (org.springframework.ai.document.Document doc : docs) {
+                String id = doc.getId();
+                double score = doc.getMetadata() != null && doc.getMetadata().containsKey("distance")
+                    ? ((Number) doc.getMetadata().get("distance")).doubleValue() : 1.0 - (rank * 0.1);
+                String content = doc.getText();
+                results.add(new Reranker.RerankedDocument(id, content, score, rank++));
             }
-
         } catch (Exception e) {
             log.error("向量检索失败", e);
         }
-
         return results;
     }
 
@@ -240,70 +192,21 @@ public class MultiRecallRagService {
     }
 
     /**
-     * 生成文本嵌入向量
-     * 优先使用真实嵌入服务，失败时降级为基于哈希的伪向量
+     * 生成文本嵌入向量（委托 Spring AI EmbeddingModel）
      */
     private List<Float> generateEmbedding(String text) {
-        if (!embeddingEnabled) {
-            return generateFallbackEmbedding(text);
-        }
-
         try {
-            // 调用 jarvis-llm 的嵌入服务
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("text", text);
-
-            List<Double> result = llmWebClient.post()
-                    .uri("/api/llm/agent/embed")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(new org.springframework.core.ParameterizedTypeReference<List<Double>>() {})
-                    .block();
-
-            if (result != null && !result.isEmpty()) {
-                // 将 Double 转换为 Float
-                List<Float> vector = new ArrayList<>(result.size());
-                for (Double v : result) {
-                    vector.add(v.floatValue());
-                }
-                log.debug("嵌入生成成功，向量维度: {}", vector.size());
-                return vector;
-            } else {
-                log.warn("嵌入服务返回空结果，使用降级策略");
-                return generateFallbackEmbedding(text);
+            float[] vector = embeddingModel.embed(text);
+            List<Float> result = new ArrayList<>(vector.length);
+            for (float v : vector) {
+                result.add(v);
             }
+            log.debug("嵌入生成成功，向量维度: {}", result.size());
+            return result;
         } catch (Exception e) {
-            log.warn("嵌入服务调用失败，使用降级策略: {}", e.getMessage());
-            return generateFallbackEmbedding(text);
+            log.error("嵌入生成失败: {}", e.getMessage());
+            return List.of();
         }
-    }
-
-    /**
-     * 降级嵌入策略（当真实嵌入服务不可用时使用）
-     * 基于文本哈希生成确定性的伪向量，保证检索功能可用
-     */
-    private List<Float> generateFallbackEmbedding(String text) {
-        List<Float> vector = new ArrayList<>(1536);
-        int hash = text.hashCode();
-        for (int i = 0; i < 1536; i++) {
-            // 基于哈希生成确定性的伪随机向量
-            float value = (float) (Math.sin((hash + i) * 0.01) * 0.5);
-            vector.add(value);
-        }
-        // 归一化
-        float norm = 0;
-        for (float v : vector) {
-            norm += v * v;
-        }
-        norm = (float) Math.sqrt(norm);
-        if (norm > 0) {
-            for (int i = 0; i < vector.size(); i++) {
-                vector.set(i, vector.get(i) / norm);
-            }
-        }
-        log.debug("使用降级嵌入策略生成向量，文本哈希: {}", hash);
-        return vector;
     }
 
     /**

@@ -439,31 +439,65 @@ public class WeatherSpringAiTool {
 }
 ```
 
-#### 4.3.3 自研 InnerTool → Spring AI ToolCallback 适配器
+#### 4.3.3 删除自研 ToolCallback POJO，InnerTool 直接返回 Spring AI ToolCallback
+
+**决策依据**：自研 `com.skyeai.jarvis.agent.tool.ToolCallback` 是纯 Lombok POJO（仅 name/description/inputSchema/function/type 字段），与 Spring AI 2.0 `org.springframework.ai.tool.ToolCallback`（接口契约，含 `getToolDefinition()` + `call(String)`）**不在同一抽象层级**。重命名为 `JarvisToolCallback` 后保留只会增加无意义的中间转换层，因此**直接删除**。
+
+**改造方案**：
+
+1. **删除** `java-jarvis/.../agent/tool/ToolCallback.java`（POJO 版）。
+2. **保留** `InnerTool` 接口——其 `getToolType()` / `isEnabled()` 是 Spring AI 原生不具备的**业务元数据**（类型分组、动态启停），有价值。
+3. `InnerTool.loadToolCallbacks()` 返回类型由 `List<自研ToolCallback>` 改为 `List<org.springframework.ai.tool.ToolCallback>`，工具实现内部用 `FunctionToolCallback` 或 `MethodToolCallback` 构造。
+4. `ToolRegistry` 内部 `Map<String, ToolCallback>` 改为持有 Spring AI 接口类型；`typeIndex` 通过自维护 `Map<String, ToolMetadata>` 保留业务元数据。
+5. **不再需要** `InnerToolAdapter`——InnerTool 实现直接产出 Spring AI ToolCallback，无需二次适配。
 
 ```java
-@Component
-public class InnerToolAdapter {
-
-    @Autowired
-    private ToolRegistry toolRegistry;
+// InnerTool 接口改造
+public interface InnerTool {
 
     /**
-     * 把自研 InnerTool 适配为 Spring AI 2.0 ToolCallback 列表。
+     * 加载工具回调列表（返回 Spring AI 2.0 ToolCallback）
      */
-    public ToolCallback[] toSpringAiToolCallbacks() {
-        List<ToolCallback> result = new ArrayList<>();
-        for (var inner : toolRegistry.getAllTools()) {
-            // 用 MethodToolCallback 包装：把 inner.getFunction() 反射为 Method
-            ToolCallback callback = ToolCallbacks.fromToolMethod(new InnerToolInvocation(inner));
-            result.add(callback);
-        }
-        return result.toArray(new ToolCallback[0]);
+    List<org.springframework.ai.tool.ToolCallback> loadToolCallbacks();
+
+    /** 工具名称（业务标识） */
+    String getToolName();
+
+    /** 工具描述（业务说明） */
+    String getToolDescription();
+
+    /** 工具类型分类（业务元数据，Spring AI 原生无此字段） */
+    default String getToolType() { return "general"; }
+
+    /** 是否启用（业务开关，Spring AI 原生无此字段） */
+    default boolean isEnabled() { return true; }
+}
+
+// 工具实现示例：直接产出 Spring AI ToolCallback
+@Component
+public class WeatherTool implements InnerTool {
+
+    @Override
+    public List<org.springframework.ai.tool.ToolCallback> loadToolCallbacks() {
+        ToolCallback callback = FunctionToolCallback.builder("get_weather", this::fetchWeather)
+                .description("获取指定城市的当前天气信息")
+                .inputSchema(buildWeatherSchema())   // JSON Schema 字符串
+                .build();
+        return List.of(callback);
+    }
+
+    private String fetchWeather(String toolInput) {
+        // toolInput 是 JSON 字符串，解析出 city 参数
+        Map<String, Object> args = parseArgs(toolInput);
+        return fetchWeatherFromApi((String) args.get("city"));
     }
 }
 ```
 
-> 适配细节：`InnerToolInvocation` 通过 `java.lang.reflect.Proxy` 动态生成带 `@Tool` 注解的方法代理，使 `ToolCallbacks.fromToolMethod` 能识别。
+**改造收益**：
+- 消除自研 POJO 与 Spring AI 接口的双重抽象
+- `ToolRegistry.getAllTools()` 直接返回可用的 Spring AI ToolCallback 列表
+- `AgentCore.convertToLlmTools` 手写 JSON Schema 构造逻辑可删除，复用 `ToolDefinition`
 
 #### 4.3.4 SAA ReactAgent 集成（质的飞跃）
 
@@ -479,12 +513,13 @@ public class ReactAgentConfig {
     public ReactAgent jarvisReactAgent(
             ChatClient chatClient,
             List<Object> toolBeans,           // 所有 @Tool 注解的 Bean
-            ToolRegistry toolRegistry,        // 自研工具注册中心
-            InnerToolAdapter innerToolAdapter) {
+            ToolRegistry toolRegistry) {      // 自研工具注册中心（已返回 Spring AI ToolCallback）
 
-        // 合并 Spring AI @Tool 工具 + 自研 InnerTool 适配工具
+        // 合并 Spring AI @Tool 工具 + 自研 InnerTool 工具
+        // 注意：toolRegistry.getAllToolCallbacks() 已直接返回 Spring AI ToolCallback
+        // （见 §4.3.3 改造，不再需要 InnerToolAdapter 二次适配）
         ToolCallback[] springAiTools = ToolCallbacks.from(toolBeans.toArray());
-        ToolCallback[] customTools = innerToolAdapter.toSpringAiToolCallbacks();
+        ToolCallback[] customTools = toolRegistry.getAllToolCallbacks().toArray(new ToolCallback[0]);
         ToolCallback[] allTools = Stream.concat(
                 Arrays.stream(springAiTools), Arrays.stream(customTools))
                 .distinct().toArray(ToolCallback[]::new);
@@ -519,8 +554,7 @@ public class AgentCore {
     @Value("${jarvis.tool.mode:hybrid}")
     private String toolMode;
 
-    public String chatWithTools(String sessionId, String userInput,
-                                 List<com.skyeai.jarvis.agent.tool.ToolCallback> legacyCallbacks) {
+    public String chatWithTools(String sessionId, String userInput) {
         // 开关：优先走 SAA ReactAgent
         if ("saa-react".equals(agentFramework) && reactAgent != null) {
             log.info("使用 SAA ReactAgent 处理对话 - sessionId: {}", sessionId);
@@ -529,14 +563,16 @@ public class AgentCore {
         }
 
         // 回退：自研 AgentCore 逻辑（v9 实现）
+        // 注意：legacyCallbacks 参数已移除，自研逻辑直接从 ToolRegistry 取 Spring AI ToolCallback
         log.info("使用自研 AgentCore 处理对话 - sessionId: {}", sessionId);
-        return chatWithToolsLegacy(sessionId, userInput, legacyCallbacks);
+        return chatWithToolsLegacy(sessionId, userInput);
     }
 
     // 原有自研逻辑保留，重命名为 chatWithToolsLegacy
-    private String chatWithToolsLegacy(String sessionId, String userInput,
-                                        List<com.skyeai.jarvis.agent.tool.ToolCallback> legacyCallbacks) {
-        // ... v9 的 AgentCore.chatWithTools 原逻辑 ...
+    // 工具来源：toolRegistry.getAllToolCallbacks()（已返回 Spring AI ToolCallback）
+    private String chatWithToolsLegacy(String sessionId, String userInput) {
+        List<ToolCallback> tools = toolRegistry.getAllToolCallbacks();
+        // ... v9 的 AgentCore.chatWithTools 原逻辑（用 Spring AI ToolCallback 替换原 POJO）...
     }
 }
 ```
@@ -822,7 +858,7 @@ public MessageChatMemoryAdvisor messageChatMemoryAdvisor(ChatMemory springAiChat
 }
 ```
 
-> 注意：Spring AI 2.0 的 `ChatMemory` 接口与项目自研 `com.skyeai.jarvis.agent.ChatMemory` 同名，需通过包名区分。建议把自研类重命名为 `JarvisChatMemory`，避免混淆。
+> 注意：Spring AI 2.0 的 `ChatMemory` 接口与项目自研 `com.skyeai.jarvis.agent.ChatMemory` 同名。**不要让自研类直接 implements**（架构不兼容，详见 §4.7.2 决策依据），而是拆分为 `SessionState` POJO + `ChatMemoryCompressor` 无状态 Bean + 新建 `SpringAiChatMemory implements` 接口。
 
 #### 4.5.8 SAA Graph Observation（可观测性增强）
 
@@ -996,27 +1032,139 @@ jarvis:
 | 短期记忆 | Redis | 会话历史持久化、跨实例恢复 | 24h | 现有 `PersistentChatMemory`（保留） |
 | 长期记忆 | Milvus `jarvis_chat_memory` collection | 跨会话历史记忆检索 | 永久 | **新增** `VectorMemoryStore` |
 
-#### 4.7.2 实现 Spring AI 2.0 ChatMemory 接口（重命名）
+#### 4.7.2 ChatMemory 分层架构（算法保留，架构重构）
 
-把 `com.skyeai.jarvis.agent.ChatMemory` 重命名为 `JarvisChatMemory`，并实现 Spring AI 2.0 接口：
+**决策依据**：自研 `com.skyeai.jarvis.agent.ChatMemory` 的核心特征是**"实例即会话"**——每个会话 new 一个实例，由 `ChatMemoryManager` 管理，实例字段 `sessionId` / `summaryText` / `history` 都是会话级状态。而 Spring AI 2.0 `org.springframework.ai.chat.memory.ChatMemory` 是**"Bean 即仓库"**的无状态接口，按 `conversationId` 参数管理多会话。
+
+如果让自研类直接 `implements` Spring AI 接口，会出现 `sessionId`（实例字段）与 `conversationId`（方法参数）双重来源、`history` 归属混乱的架构冲突。因此**不直接 implements**，而是**拆分重构**：
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ SpringAiChatMemory implements org.springframework.ai...ChatMemory │ ← 新建，无状态单例 Bean
+│   - Map<String, SessionState> sessions                          │
+│   - add(conversationId, messages) → 取 SessionState + 调压缩     │
+│   - get(conversationId) → 读 SessionState                        │
+│   - clear(conversationId) → 移除 SessionState（向量库不清）       │
+└──────────────────────────────────────────────────────────────────┘
+                          ↓ 委托
+┌──────────────────────────────────────────────────────────────────┐
+│ ChatMemoryCompressor（新组件，无状态 Bean）                       │ ← 抽出压缩算法
+│   - trimOldAssistantMessages(List<Message>)                     │
+│   - compressIfNeeded(List<Message>, summary)                    │
+│   - 保护 TOOL/TOOL_RESULT 配对的核心业务逻辑（v9 沉淀）           │
+└──────────────────────────────────────────────────────────────────┘
+                          ↑ 复用
+┌──────────────────────────────────────────────────────────────────┐
+│ SessionState（POJO，非 Bean）                                     │ ← 原 ChatMemory 的实例字段
+│   - String summaryText                                          │
+│   - List<Message> history                                       │
+│   - boolean compressionEnabled                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**保留的核心价值**（不删除的业务沉淀）：
+- `trimOldAssistantMessages` 的 **TOOL/TOOL_RESULT 配对保护**逻辑（原 `ChatMemory.java:249-271`）——Spring AI 没有
+- 三层压缩的**触发顺序**（先 Assistant 裁剪 → 再摘要 → 最后滑动窗口）——Spring AI 无内置压缩
+- `SummaryCompressor` 调 LLM 做摘要——Spring AI 无内置
+
+**重构步骤**：
+
+1. 原 `ChatMemory.java` 拆三部分：
+   - 实例字段 → `SessionState` POJO（不删除，但不再是 Bean）
+   - 压缩算法 → `ChatMemoryCompressor`（无状态 Bean）
+   - `@Component` 注解移除（不再作为单例 Bean）
+2. `forSubAgent()` 语义改为 `conversationId` 命名空间（如 `subagent:{id}`），不再需要工厂方法
+3. `ChatMemoryManager` 被 `SpringAiChatMemory` 内部 Map 替代（或保留为内部路由辅助）
 
 ```java
+// 1. SessionState：原 ChatMemory 的实例字段，纯 POJO
+public class SessionState {
+    private String summaryText = "";
+    private List<Message> history = new ArrayList<>();
+    private boolean compressionEnabled = true;
+    // getter/setter ...
+}
+
+// 2. ChatMemoryCompressor：无状态 Bean，承载三层压缩算法（业务沉淀）
+@Component
+public class ChatMemoryCompressor {
+
+    @Autowired
+    private SummaryCompressor summaryCompressor;
+
+    @Value("${chat.memory.compress.threshold:20}")
+    private int compressThresholdMessages;
+
+    @Value("${chat.memory.preserve-recent:5}")
+    private int preserveRecentMessages;
+
+    @Value("${chat.memory.assistant.keep-count:10}")
+    private int keepAssistantCount;
+
+    @Value("${chat.memory.assistant.trim-threshold:30}")
+    private int assistantTrimThreshold;
+
+    /**
+     * 对 SessionState 执行三层压缩（Assistant 裁剪 → 摘要 → 滑动窗口兜底在 addMessage 内）
+     * 保留 v9 的 TOOL/TOOL_RESULT 配对保护逻辑
+     */
+    public void compressIfNeeded(SessionState state) {
+        List<Message> history = state.getHistory();
+        if (history.size() <= compressThresholdMessages) return;
+
+        // 第一层：Assistant 消息裁剪
+        if (history.size() > assistantTrimThreshold) {
+            trimOldAssistantMessages(history);
+        }
+
+        // 第二层：摘要压缩（保护 TOOL/TOOL_RESULT 配对）
+        int compressEndIndex = history.size() - preserveRecentMessages;
+        while (compressEndIndex > 0) {
+            Message msg = history.get(compressEndIndex);
+            if (msg.getMessageType() == Message.MessageType.TOOL ||
+                msg.getMessageType() == Message.MessageType.TOOL_RESULT) {
+                compressEndIndex--;
+            } else {
+                break;
+            }
+        }
+        if (compressEndIndex <= 0) return;
+
+        List<Message> toCompress = new ArrayList<>(history.subList(0, compressEndIndex));
+        String newSummary = summaryCompressor.compress(toCompress, state.getSummaryText());
+        if (newSummary != null && !newSummary.isBlank()) {
+            state.setSummaryText(newSummary);
+            history.subList(0, compressEndIndex).clear();
+        }
+    }
+
+    /** v9 沉淀：裁剪旧 Assistant 消息时保护配对的 TOOL/TOOL_RESULT */
+    private void trimOldAssistantMessages(List<Message> history) { /* 原 v9 逻辑迁移 */ }
+}
+
+// 3. SpringAiChatMemory：无状态单例 Bean，实现 Spring AI 2.0 接口
 @Component
 public class SpringAiChatMemory implements org.springframework.ai.chat.memory.ChatMemory {
 
-    private final JarvisChatMemory jarvisMemory;          // 现有三层压缩逻辑
-    private final PersistentChatMemory persistentMemory;  // Redis 持久化
-    private final VectorMemoryStore vectorMemoryStore;    // 新增：向量库长期记忆
+    private final Map<String, SessionState> sessions = new ConcurrentHashMap<>();
+    private final ChatMemoryCompressor compressor;
+    private final PersistentChatMemory persistentMemory;   // Redis 短期记忆（保留）
+    private final VectorMemoryStore vectorMemoryStore;     // 向量库长期记忆（新增）
 
     @Override
     public void add(String conversationId, List<Message> messages) {
-        // 1. 写工作记忆（触发三层压缩）
-        messages.forEach(msg -> jarvisMemory.addMessage(convertMsg(msg)));
+        SessionState state = sessions.computeIfAbsent(conversationId, k -> new SessionState());
 
-        // 2. 写 Redis 短期记忆
-        messages.forEach(msg -> persistentMemory.addMessage(conversationId, convertMsg(msg)));
+        // 1. 写工作记忆
+        messages.forEach(msg -> state.getHistory().add(msg));
 
-        // 3. 写向量库长期记忆（每条消息向量化后存入）
+        // 2. 触发三层压缩（委托给无状态压缩器）
+        compressor.compressIfNeeded(state);
+
+        // 3. 写 Redis 短期记忆
+        messages.forEach(msg -> persistentMemory.addMessage(conversationId, msg));
+
+        // 4. 写向量库长期记忆
         for (Message msg : messages) {
             if (msg instanceof AssistantMessage || msg instanceof UserMessage) {
                 vectorMemoryStore.store(conversationId, msg);
@@ -1026,15 +1174,17 @@ public class SpringAiChatMemory implements org.springframework.ai.chat.memory.Ch
 
     @Override
     public List<Message> get(String conversationId) {
-        // 优先从工作记忆取，回退 Redis
-        return jarvisMemory.getMessages().stream()
-                .map(this::toSpringAiMessage)
-                .collect(Collectors.toList());
+        SessionState state = sessions.get(conversationId);
+        if (state == null) {
+            // 回退 Redis
+            return persistentMemory.getMessages(conversationId);
+        }
+        return Collections.unmodifiableList(state.getHistory());
     }
 
     @Override
     public void clear(String conversationId) {
-        jarvisMemory.clear();
+        sessions.remove(conversationId);
         persistentMemory.clear(conversationId);
         // 注意：向量库长期记忆不随会话清除，保留为永久记忆
     }
@@ -1081,7 +1231,8 @@ public class VectorMemoryStore {
 
 ```java
 public String chat(String sessionId, String userInput) {
-    JarvisChatMemory memory = memoryManager.getOrCreateMemory(sessionId);
+    // 通过 SpringAiChatMemory 获取/创建会话状态（内部维护 Map<String, SessionState>）
+    SessionState state = springAiChatMemory.getOrCreateState(sessionId);
 
     // 历史记忆检索（新增）
     if (memoryRetrievalEnabled) {
@@ -1090,13 +1241,16 @@ public String chat(String sessionId, String userInput) {
             String historyContext = formatHistoryContext(historyDocs);
             String enrichedInput = promptService.renderUserPrompt("memory-enhanced",
                     Map.of("userInput", userInput, "historyContext", historyContext));
-            memory.addMessage(new UserMessage(enrichedInput));
+            state.getHistory().add(new UserMessage(enrichedInput));
         } else {
-            memory.addMessage(new UserMessage(userInput));
+            state.getHistory().add(new UserMessage(userInput));
         }
     } else {
-        memory.addMessage(new UserMessage(userInput));
+        state.getHistory().add(new UserMessage(userInput));
     }
+
+    // 触发三层压缩（委托给无状态压缩器）
+    chatMemoryCompressor.compressIfNeeded(state);
 
     // ... 后续流程
 }
@@ -1127,6 +1281,12 @@ jarvis:
 
 #### 4.7.6 现有代码改造点
 
+- `java-jarvis/agent/ChatMemory.java`：**拆分重构**（非重命名）——实例字段提取为 `SessionState` POJO；三层压缩算法迁移到 `ChatMemoryCompressor` 无状态 Bean；`@Component` 注解移除；`forSubAgent()` 改为 `conversationId` 命名空间。详见 §4.7.2。
+- `java-jarvis/agent/ChatMemoryManager.java`：被 `SpringAiChatMemory` 内部 `Map<String, SessionState>` 替代（或保留为内部路由辅助）。
+- `java-jarvis/agent/tool/ToolCallback.java`：**删除**（POJO 版，无抽象价值，详见 §4.3.3）。
+- `java-jarvis/agent/tool/InnerTool.java`：**保留接口**，`loadToolCallbacks()` 返回类型改为 `List<org.springframework.ai.tool.ToolCallback>`；`getToolType()`/`isEnabled()` 业务元数据保留。
+- `java-jarvis/agent/tool/ToolRegistry.java`：内部 Map 改为持有 Spring AI `ToolCallback` 接口类型；新增 `getAllToolCallbacks()` 方法直接返回可用列表。
+- `java-jarvis/agent/tool/InnerToolAdapter.java`：**不再需要创建**（InnerTool 直接产出 Spring AI ToolCallback，无需二次适配）。
 - `jarvis-data/ChatHistoryService.java:48-50,56-75 saveToVectorDatabase`：删除调用 `vectorService.addChatHistoryVector`（内存占位），改为通过 gRPC 调用 `SpringAiChatMemory.add()`，由 java-jarvis 统一写向量库。
 - `jarvis-data/TextEmbeddingService.java:16-31`：删除 `Random` 占位，改为委托 `DashScopeEmbeddingModel`（通过 gRPC 或直接注入）。
 - `jarvis-data/grpc/DataServiceImpl.java`：补齐 `searchSimilarChatHistory` 实现，委托给 `VectorMemoryStore.retrieveRelevant`。
@@ -1300,9 +1460,11 @@ spring:
 
 | 现有组件 | v10 保留方式 | 默认开关 | 备注 |
 |---------|-------------|---------|------|
-| 自研 `InnerTool` + `ToolRegistry` | 适配为 Spring AI ToolCallback | `jarvis.tool.mode=hybrid` | 代码不删除，加适配器 |
+| 自研 `ToolCallback` POJO | **删除**（无抽象价值，详见 §4.3.3） | — | 不保留，全面用 Spring AI `@Tool` |
+| 自研 `InnerTool` 接口 + `ToolRegistry` | **保留接口**，返回类型改为 Spring AI ToolCallback | `jarvis.tool.mode=hybrid` | `getToolType()`/`isEnabled()` 业务元数据保留 |
 | 自研 `AgentCore` | 与 SAA ReactAgent 并存 | `jarvis.agent.framework=custom` | saa-react 不可用时回退 |
-| 自研 `ChatMemory`（重命名为 `JarvisChatMemory`） | 作为 `SpringAiChatMemory` 的内层 | `jarvis.memory.mode=hybrid` | 三层压缩逻辑保留 |
+| 自研 `ChatMemory` | **拆分重构**（非重命名）：`SessionState` POJO + `ChatMemoryCompressor` 无状态 Bean | `jarvis.memory.mode=hybrid` | 三层压缩算法保留，但不直接 implements（详见 §4.7.2） |
+| `ChatMemoryManager` | 被 `SpringAiChatMemory` 内部 Map 替代 | — | 多会话管理职责被 Spring AI 接口吸收 |
 | `PersistentChatMemory`（Redis） | 作为 `SpringAiChatMemory` 的持久化层 | `jarvis.memory.mode=hybrid` | 不重写 |
 | Qdrant VectorStore | 与 Milvus 并存 | `jarvis.vector-store.routing.skills-meta=qdrant` | 双库共存 |
 | `ContentSecurityFilter` | 适配为 `SensitiveWordAdvisor` 内部依赖 | `jarvis.advisor.enable.sensitive-input=true` | 词库外置 |
@@ -1370,7 +1532,7 @@ spring:
 |------|------|------|
 | 3.1 `ReactAgentConfig` 实现 SAA ReactAgent Bean | java-jarvis | 原生 ReAct 多轮循环 |
 | 3.2 `AgentCore` 改造为双框架开关 | java-jarvis | saa-react / custom 切换 |
-| 3.3 `InnerToolAdapter` 实现 | java-jarvis | 自研工具适配为 Spring AI ToolCallback |
+| 3.3 `InnerTool` 接口改造（返回 Spring AI ToolCallback）+ 删除自研 ToolCallback POJO | java-jarvis | 消除双重抽象，无需 InnerToolAdapter |
 | 3.4 新增 `@Tool` 工具（搜索、计算器、日期等） | java-jarvis | 工具数量扩充 |
 | 3.5 DataAgent 集成（首选） | jarvis-sql | 官方 text-to-sql 智能体 |
 | 3.6 `SuperSqlTextToSqlService` 备选实现 | jarvis-sql | SuperSQL 思路 + function call |
@@ -1404,7 +1566,7 @@ spring:
 
 | 任务 | 模块 | 产出 |
 |------|------|------|
-| 5.1 自研 `ChatMemory` 重命名为 `JarvisChatMemory` | java-jarvis | 避免与 Spring AI 同名混淆 |
+| 5.1 自研 `ChatMemory` 拆分重构（SessionState POJO + ChatMemoryCompressor） | java-jarvis | 算法保留，架构适配 Spring AI 接口 |
 | 5.2 `SpringAiChatMemory` 实现 Spring AI 2.0 接口 | java-jarvis | 三级存储联动 |
 | 5.3 `VectorMemoryStore` 实现 | java-jarvis | 向量库长期记忆写入 |
 | 5.4 `AgentCore.chat` 接入历史记忆检索 | java-jarvis | 用户问题向量化检索历史 |
@@ -1441,8 +1603,8 @@ spring:
 | **Spring Cloud Alibaba 2025.x 未发布或不齐** | 中 | Nacos 注册/配置失效 | 等待配套版；或暂时用 Eureka/本地配置降级 |
 | **第三方 SDK Jakarta EE 11 兼容** | 中 | 连接失败 | 逐个验证 Nacos/Redis/Milvus/Qdrant/gRPC SDK |
 | **Milvus 2.4.x 与 spring-ai-milvus-store 兼容性** | 中 | 连接失败 | docker-compose 固定 Milvus 版本，先验证再集成 |
-| 自研 ToolCallback 与 Spring AI ToolCallback 同名冲突 | 高 | 编译错误 | 重命名自研类为 `JarvisToolCallback` |
-| 自研 ChatMemory 与 Spring AI ChatMemory 同名冲突 | 高 | 编译错误 | 重命名为 `JarvisChatMemory` |
+| 自研 ToolCallback POJO 与 Spring AI ToolCallback 同名冲突 | 高 | 编译错误 | **删除自研 POJO**（无抽象价值），InnerTool 直接返回 Spring AI ToolCallback，详见 §4.3.3 |
+| 自研 ChatMemory 与 Spring AI ChatMemory 同名冲突 | 高 | 编译错误 | **拆分重构**（非重命名 implements）：SessionState POJO + ChatMemoryCompressor + SpringAiChatMemory，详见 §4.7.2 |
 | DataAgent 在 M1.1 版本不可用或不稳定 | 中 | Text2SQL 失效 | 回退至 `supersql` 思路自研实现 |
 | ReactAgent API 在 M1.1 版本变化 | 中 | Agent 编排失败 | 回退至 `jarvis.agent.framework=custom` 自研 AgentCore |
 | 多 Advisor order 冲突 | 低 | 链路顺序错乱 | 通过 `getOrder()` 显式声明，单元测试覆盖 |
@@ -1456,7 +1618,7 @@ spring:
 | Spring Boot 4 大版本升级引入大量兼容问题 | Phase 0 单独隔离验证；保留 v9 分支可随时回退 |
 | SAA M1.1 里程碑版生产稳定性存疑 | 关键路径全部保留 legacy 开关；M1.1 仅用于新功能，核心链路可回退 |
 | 大量现有代码改造引入 bug | 每阶段保留 legacy 开关，可随时回退 |
-| 自研 ChatMemory 重命名涉及面广 | 全局批量替换 + 编译验证 |
+| 自研 ChatMemory 拆分重构涉及面广 | 拆分为 SessionState + ChatMemoryCompressor + SpringAiChatMemory 三件套；逐方法迁移压缩算法并保留单元测试对照 |
 | 提示词迁移可能丢失原语义 | 逐个对比迁移前后输出，保留 legacy 模式对照 |
 | Milvus 引入增加运维成本 | docker-compose 一键启动；提供 `jarvis.vector-store.type=qdrant` 回退 |
 
@@ -1517,12 +1679,16 @@ jarvis-v10-requirements.md（本文档）
 | 模块 | 文件 | 改造类型 |
 |------|------|---------|
 | 全局 | 所有 `pom.xml` | Spring Boot 4.0 + Spring AI 2.0 + SAA 2.0 依赖升级 |
-| java-jarvis | `agent/ChatMemory.java` | 重命名为 `JarvisChatMemory` |
+| java-jarvis | `agent/ChatMemory.java` | **拆分重构**：实例字段→`SessionState` POJO，压缩算法→`ChatMemoryCompressor`，移除 `@Component` |
+| java-jarvis | `agent/SessionState.java` | 新增：原 ChatMemory 实例字段的 POJO 载体 |
+| java-jarvis | `agent/ChatMemoryCompressor.java` | 新增：无状态 Bean，承载三层压缩算法（业务沉淀保留） |
+| java-jarvis | `agent/ChatMemoryManager.java` | 改造：被 `SpringAiChatMemory` 内部 Map 替代或保留为路由辅助 |
 | java-jarvis | `agent/AgentCore.java` | 改造为双框架开关（ReactAgent / 自研）+ 历史检索 |
-| java-jarvis | `agent/tool/ToolCallback.java` | 重命名为 `JarvisToolCallback` 避免冲突 |
-| java-jarvis | `agent/tool/InnerToolAdapter.java` | 新增：自研 → Spring AI 适配 |
+| java-jarvis | `agent/tool/ToolCallback.java` | **删除**（POJO 版，无抽象价值，详见 §4.3.3） |
+| java-jarvis | `agent/tool/InnerTool.java` | 改造：`loadToolCallbacks()` 返回 Spring AI ToolCallback；保留 `getToolType()`/`isEnabled()` |
+| java-jarvis | `agent/tool/ToolRegistry.java` | 改造：内部 Map 持有 Spring AI ToolCallback；新增 `getAllToolCallbacks()` |
 | java-jarvis | `config/ReactAgentConfig.java` | 新增：SAA ReactAgent Bean |
-| java-jarvis | `agent/SpringAiChatMemory.java` | 新增：实现 Spring AI 2.0 接口 |
+| java-jarvis | `agent/SpringAiChatMemory.java` | 新增：实现 Spring AI 2.0 接口（无状态单例） |
 | java-jarvis | `agent/VectorMemoryStore.java` | 新增：向量库长期记忆 |
 | java-jarvis | `config/VectorStoreConfig.java` | 新增：多 VectorStore Bean |
 | java-jarvis | `advisor/LoggingAdvisor.java` | 新增 |

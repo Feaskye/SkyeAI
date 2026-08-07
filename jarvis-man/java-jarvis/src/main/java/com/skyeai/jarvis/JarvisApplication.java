@@ -10,10 +10,16 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@ComponentScan(excludeFilters = @ComponentScan.Filter(
+    type = FilterType.REGEX,
+    pattern = "com\\.skyeai\\.jarvis\\.(skills\\.SkillServiceApplication|llm\\.LlmServiceApplication|sql\\.TextToSqlApplication)"
+))
 @EnableScheduling
 @EnableDiscoveryClient
 public class JarvisApplication {

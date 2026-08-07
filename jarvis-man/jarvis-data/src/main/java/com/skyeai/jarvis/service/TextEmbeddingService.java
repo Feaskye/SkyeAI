@@ -1,33 +1,43 @@
 package com.skyeai.jarvis.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 文本向量化服务，用于将文本转换为向量表示
- * 注意：这里使用随机向量作为示例，实际应用中应使用真实的嵌入模型
+ * 基于 Spring AI EmbeddingModel 实现
  */
 @Service
 public class TextEmbeddingService {
 
-    private static final int VECTOR_SIZE = 768;
-    private final Random random = new Random();
+    private static final Logger log = LoggerFactory.getLogger(TextEmbeddingService.class);
+
+    @Autowired
+    private EmbeddingModel embeddingModel;
 
     /**
      * 将文本转换为向量
      */
     public List<Double> embedText(String text) {
-        // 实际应用中，这里应该使用真实的嵌入模型，如BERT、Sentence Transformers等
-        // 这里使用随机向量作为示例
-        List<Double> vector = new ArrayList<>(VECTOR_SIZE);
-        for (int i = 0; i < VECTOR_SIZE; i++) {
-            // 生成-1到1之间的随机数
-            vector.add(random.nextDouble() * 2 - 1);
+        try {
+            // 委托 Spring AI EmbeddingModel 生成向量
+            float[] vector = embeddingModel.embed(text);
+            List<Double> result = new ArrayList<>(vector.length);
+            for (float v : vector) {
+                result.add((double) v);
+            }
+            log.info("文本向量化成功，向量维度：{}", vector.length);
+            return result;
+        } catch (Exception e) {
+            log.error("文本向量化失败：{}", e.getMessage(), e);
+            throw new RuntimeException("文本向量化失败", e);
         }
-        return vector;
     }
 
     /**

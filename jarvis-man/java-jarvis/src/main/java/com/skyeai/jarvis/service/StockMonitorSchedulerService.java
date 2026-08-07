@@ -5,7 +5,7 @@ import com.skyeai.jarvis.model.ScheduleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,11 +31,15 @@ public class StockMonitorSchedulerService {
 
     /**
      * 服务启动时初始化任务
+     * v10 修正：try-catch 容忍 gRPC 服务不可用时 init 失败，不阻塞应用启动
      */
     @PostConstruct
     public void init() {
-        // 初始化所有活跃的重复事件任务
-        reloadTasks();
+        try {
+            reloadTasks();
+        } catch (Exception e) {
+            System.err.println("StockMonitorScheduler init skipped (gRPC service unavailable): " + e.getMessage());
+        }
     }
     
     /**

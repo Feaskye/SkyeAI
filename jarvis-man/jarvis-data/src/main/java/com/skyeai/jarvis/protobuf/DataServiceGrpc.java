@@ -7,7 +7,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * 数据服务接口
  * </pre>
  */
-@javax.annotation.Generated(
+@jakarta.annotation.Generated(
     value = "by gRPC proto compiler (version 1.54.0)",
     comments = "Source: data_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated

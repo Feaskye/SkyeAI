@@ -27,7 +27,7 @@ public class LocalFirstService {
     @Value("${local.cache.path}")
     private String cachePath;
 
-    @Value("${ollama.base.url}")
+    @Value("${ollama.base.url:http://localhost:11434}")
     private String ollamaBaseUrl;
 
     // 本地模型注册表

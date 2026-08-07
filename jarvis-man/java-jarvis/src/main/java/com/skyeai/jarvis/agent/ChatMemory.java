@@ -1,80 +1,57 @@
 package com.skyeai.jarvis.agent;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * 对话记忆类
+ * 对话记忆 POJO（v10 改造：移除 @Component，仅作为会话级实例被 ChatMemoryManager/SubAgent/PersistentChatMemory 通过 new 创建）
+ *
  * 实现三层记忆压缩机制：
- * 1. 摘要压缩：调用LLM对历史对话进行摘要
- * 2. Assistant消息裁剪：保留最近的Assistant消息
- * 3. 滑动窗口：控制总消息数量
+ * 1. 摘要压缩：当 SummaryCompressor 可用时调用 LLM 压缩历史（非 Spring 管理实例该字段为 null，自动跳过）
+ * 2. Assistant消息裁剪：保留最近的 Assistant 消息，保护 TOOL/TOOL_RESULT 配对
+ * 3. 滑动窗口：控制总消息数量（addMessage 兜底）
+ *
+ * 注意：v10 新链路使用 SpringAiChatMemory + SessionState + ChatMemoryCompressor，
+ *      本类保留为自研 AgentCore/SubAgent 旧链路兼容。
  */
-@Slf4j
-@Component
+@Data
 public class ChatMemory {
-    
+
+    /** 触发摘要压缩的消息阈值（默认 20） */
+    private int compressThresholdMessages = 20;
+
+    /** 压缩时保留最近消息的条数（默认 5） */
+    private int preserveRecentMessages = 5;
+
+    /** 滑动窗口：最大消息数量（默认 50） */
+    private int maxMessages = 50;
+
+    /** Assistant 消息裁剪：保留最近的条数（默认 10） */
+    private int keepAssistantCount = 10;
+
+    /** Assistant 消息裁剪触发阈值（默认 30） */
+    private int assistantTrimThreshold = 30;
+
     /**
-     * 触发压缩的消息阈值
+     * 摘要压缩器（可选）
+     * - 通过 Spring 注入的 ChatMemory Bean 有该字段（v10 已移除 @Component，不再存在）
+     * - 通过 new 创建的会话级实例该字段为 null，摘要压缩自动跳过
      */
-    @Value("${chat.memory.compress.threshold:20}")
-    private int compressThresholdMessages;
-    
-    /**
-     * 保留最近消息的数量
-     */
-    @Value("${chat.memory.preserve-recent:5}")
-    private int preserveRecentMessages;
-    
-    /**
-     * 最大消息数量
-     */
-    @Value("${chat.memory.max-messages:50}")
-    private int maxMessages;
-    
-    /**
-     * 保留最近的Assistant消息数量（用于Assistant消息裁剪层）
-     */
-    @Value("${chat.memory.assistant.keep-count:10}")
-    private int keepAssistantCount;
-    
-    /**
-     * Assistant消息裁剪触发阈值
-     */
-    @Value("${chat.memory.assistant.trim-threshold:30}")
-    private int assistantTrimThreshold;
-    
-    /**
-     * 摘要压缩器
-     */
-    @Autowired
     private SummaryCompressor summaryCompressor;
-    
-    /**
-     * 会话ID
-     */
+
+    /** 会话ID */
     private String sessionId;
-    
-    /**
-     * 摘要文本
-     */
+
+    /** 摘要文本 */
     private String summaryText = "";
-    
-    /**
-     * 消息历史列表
-     */
+
+    /** 消息历史列表 */
     private List<Message> history = new ArrayList<>();
-    
-    /**
-     * 是否启用压缩
-     */
+
+    /** 是否启用压缩 */
     private boolean compressionEnabled = true;
     
     /**
@@ -134,11 +111,10 @@ public class ChatMemory {
      */
     public void addMessage(Message message) {
         history.add(message);
-        
-        // 滑动窗口控制
+
+        // 滑动窗口兜底：超过最大消息数时移除最旧的
         while (history.size() > maxMessages) {
             history.remove(0);
-            log.debug("滑动窗口移除了最早的消息");
         }
     }
     
@@ -166,48 +142,42 @@ public class ChatMemory {
         if (history.size() <= compressThresholdMessages) {
             return;
         }
-        
-        log.debug("触发记忆压缩，当前消息数: {}", history.size());
-        
-        // 第一层：Assistant消息裁剪
-        // 当消息数超过assistantTrimThreshold时，裁剪旧的Assistant消息
+
+        // 第一层：Assistant 消息裁剪（当消息数超过阈值时执行）
         if (history.size() > assistantTrimThreshold) {
             trimOldAssistantMessages();
         }
-        
-        // 第二层：摘要压缩
-        // 计算压缩结束索引（保留最近的消息）
+
+        // 第二层：摘要压缩（需 SummaryCompressor 可用；new 创建的 POJO 实例该字段为 null，自动跳过）
+        if (summaryCompressor == null) {
+            // 无压缩器时，依赖 addMessage 的滑动窗口兜底
+            return;
+        }
+
+        // 计算压缩结束索引（保留最近的 preserveRecentMessages 条消息）
         int compressEndIndex = history.size() - preserveRecentMessages;
-        
-        // 保护TOOL消息的上下文完整性
-        // 确保工具调用和工具结果不被分开压缩
+
+        // 保护 TOOL/TOOL_RESULT 配对完整性：不把配对的工具消息分开压缩
         while (compressEndIndex > 0) {
             Message msg = history.get(compressEndIndex);
-            if (msg.getMessageType() == Message.MessageType.TOOL || 
+            if (msg.getMessageType() == Message.MessageType.TOOL ||
                 msg.getMessageType() == Message.MessageType.TOOL_RESULT) {
                 compressEndIndex--;
             } else {
                 break;
             }
         }
-        
+
         if (compressEndIndex <= 0) {
-            log.debug("没有可压缩的消息");
             return;
         }
-        
-        // 获取需要压缩的消息
+
         List<Message> messagesToCompress = new ArrayList<>(history.subList(0, compressEndIndex));
-        
-        // 调用摘要压缩器
         String newSummary = summaryCompressor.compress(messagesToCompress, summaryText);
-        
+
         if (newSummary != null && !newSummary.isBlank()) {
             this.summaryText = newSummary;
-            // 移除已压缩的消息
             history.subList(0, compressEndIndex).clear();
-            log.debug("记忆压缩完成，压缩后消息数: {}, 摘要长度: {}", 
-                    history.size(), summaryText.length());
         }
     }
     
@@ -229,14 +199,12 @@ public class ChatMemory {
         if (assistantCount <= keepAssistantCount) {
             return;
         }
-        
-        log.debug("开始裁剪Assistant消息，当前数量: {}, 保留: {}", assistantCount, keepAssistantCount);
-        
-        // 从后往前遍历，标记需要保留的Assistant消息
+
+        // 从后往前遍历，标记需要移除的Assistant消息索引（保护TOOL/TOOL_RESULT配对）
         int keptCount = 0;
         List<Integer> toRemoveIndices = new ArrayList<>();
         List<Message> messages = new ArrayList<>(history);
-        
+
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message msg = messages.get(i);
             if (msg.getMessageType() == Message.MessageType.ASSISTANT) {
@@ -280,9 +248,6 @@ public class ChatMemory {
                 history.remove(index);
             }
         }
-        
-        log.debug("Assistant消息裁剪完成，移除消息数: {}, 剩余消息数: {}", 
-                toRemoveIndices.size(), history.size());
     }
     
     /**

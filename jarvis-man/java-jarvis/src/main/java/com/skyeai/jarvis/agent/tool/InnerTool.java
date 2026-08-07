@@ -1,16 +1,18 @@
 package com.skyeai.jarvis.agent.tool;
 
 import java.util.List;
+import org.springframework.ai.tool.ToolCallback;
 
 /**
  * 内部工具接口
  * 定义可插拔工具的标准接口，实现开闭原则
  * 所有自定义工具都需要实现此接口
+ * v10 改造：loadToolCallbacks() 返回 Spring AI 2.0 ToolCallback（删除自研 POJO）
  */
 public interface InnerTool {
-    
+
     /**
-     * 加载工具回调列表
+     * 加载工具回调列表（返回 Spring AI 2.0 ToolCallback）
      * @return 工具回调列表
      */
     List<ToolCallback> loadToolCallbacks();

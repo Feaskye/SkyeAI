@@ -3,7 +3,7 @@ package com.skyeai.jarvis.sql.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;

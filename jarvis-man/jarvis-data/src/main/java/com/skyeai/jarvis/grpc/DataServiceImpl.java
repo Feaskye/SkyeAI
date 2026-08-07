@@ -1,5 +1,6 @@
 package com.skyeai.jarvis.grpc;
 
+import com.skyeai.jarvis.config.VectorService;
 import com.skyeai.jarvis.model.*;
 import com.skyeai.jarvis.protobuf.*;
 import com.skyeai.jarvis.service.*;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -23,20 +26,26 @@ public class DataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
     private final PriceChangeInfoService priceChangeInfoService;
     private final ScheduleEventService scheduleEventService;
     private final UserPreferenceService userPreferenceService;
+    private final TextEmbeddingService textEmbeddingService;
+    private final VectorService vectorService;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Autowired
-    public DataServiceImpl(ChatHistoryService chatHistoryService, 
-                          StockPriceService stockPriceService, 
-                          PriceChangeInfoService priceChangeInfoService, 
-                          ScheduleEventService scheduleEventService, 
-                          UserPreferenceService userPreferenceService) {
+    public DataServiceImpl(ChatHistoryService chatHistoryService,
+                          StockPriceService stockPriceService,
+                          PriceChangeInfoService priceChangeInfoService,
+                          ScheduleEventService scheduleEventService,
+                          UserPreferenceService userPreferenceService,
+                          TextEmbeddingService textEmbeddingService,
+                          VectorService vectorService) {
         this.chatHistoryService = chatHistoryService;
         this.stockPriceService = stockPriceService;
         this.priceChangeInfoService = priceChangeInfoService;
         this.scheduleEventService = scheduleEventService;
         this.userPreferenceService = userPreferenceService;
+        this.textEmbeddingService = textEmbeddingService;
+        this.vectorService = vectorService;
     }
 
     // 聊天历史相关方法
@@ -270,6 +279,35 @@ public class DataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
         responseObserver.onCompleted();
     }
 
+    // 向量搜索相关方法
+    @Override
+    public void searchSimilarChatHistory(SearchSimilarChatHistoryRequest request, StreamObserver<SearchSimilarChatHistoryResponse> responseObserver) {
+        // v10 改造：VectorService 已委托 Spring AI VectorStore（内部自动 embed），
+        //          无需再调用 textEmbeddingService 生成向量，直接传文本查询
+        String query = request.getQuery();
+
+        // 构建用户过滤条件
+        Map<String, Object> filter = new HashMap<>();
+        if (!request.getUserId().isEmpty()) {
+            filter.put("user_id", request.getUserId());
+        }
+
+        int limit = request.getLimit() > 0 ? request.getLimit() : 5;
+        List<Map<String, Object>> results = vectorService.searchSimilarChatHistory(query, limit, filter);
+
+        SearchSimilarChatHistoryResponse.Builder builder = SearchSimilarChatHistoryResponse.newBuilder();
+        for (Map<String, Object> point : results) {
+            Object payloadObj = point.get("payload");
+            if (payloadObj instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> payload = (Map<String, Object>) payloadObj;
+                builder.addChatHistories(convertPayloadToChatHistoryProto(payload));
+            }
+        }
+        responseObserver.onNext(builder.build());
+        responseObserver.onCompleted();
+    }
+
     // 转换方法：实体类到Proto类
     private ChatHistoryProto convertToChatHistoryProto(ChatHistory chatHistory) {
         ChatHistoryProto.Builder builder = ChatHistoryProto.newBuilder()
@@ -291,6 +329,34 @@ public class DataServiceImpl extends DataServiceGrpc.DataServiceImplBase {
             builder.setMetadata(chatHistory.getMetadata());
         }
         
+        return builder.build();
+    }
+
+    /**
+     * 将向量搜索结果的 payload 转换为 ChatHistoryProto
+     */
+    private ChatHistoryProto convertPayloadToChatHistoryProto(Map<String, Object> payload) {
+        ChatHistoryProto.Builder builder = ChatHistoryProto.newBuilder();
+        Object userId = payload.get("user_id");
+        if (userId != null) {
+            builder.setUserId(String.valueOf(userId));
+        }
+        Object content = payload.get("content");
+        if (content != null) {
+            builder.setContent(String.valueOf(content));
+        }
+        Object role = payload.get("role");
+        if (role != null) {
+            builder.setRole(String.valueOf(role));
+        }
+        Object sessionId = payload.get("session_id");
+        if (sessionId != null) {
+            builder.setSessionId(String.valueOf(sessionId));
+        }
+        Object createdAt = payload.get("created_at");
+        if (createdAt != null) {
+            builder.setCreatedAt(String.valueOf(createdAt));
+        }
         return builder.build();
     }
 

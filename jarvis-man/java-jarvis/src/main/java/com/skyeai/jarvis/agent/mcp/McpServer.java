@@ -1,5 +1,6 @@
 package com.skyeai.jarvis.agent.mcp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyeai.jarvis.agent.tool.ToolRegistry;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +18,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class McpServer {
-    
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     /**
      * 服务端口
      */
     @Value("${mcp.server.port:3001}")
     private int port;
-    
+
     /**
      * 是否启用
      */
     @Value("${mcp.server.enabled:false}")
     private boolean enabled;
-    
+
     /**
      * 工具注册器
      */
     @Autowired
     private ToolRegistry toolRegistry;
-    
+
     /**
      * 启动MCP服务器
      */
@@ -45,11 +48,11 @@ public class McpServer {
             log.info("MCP服务器已禁用");
             return;
         }
-        
+
         // 实际实现应启动真正的MCP服务器
         log.info("MCP服务器启动中，端口: {}", port);
     }
-    
+
     /**
      * 获取可用的工具列表
      * @return MCP工具列表
@@ -57,13 +60,13 @@ public class McpServer {
     public List<McpTool> getAvailableTools() {
         return toolRegistry.getAllTools().stream()
                 .map(tool -> new McpTool(
-                        tool.getName(),
-                        tool.getDescription(),
-                        tool.getInputSchema()
+                        tool.getToolDefinition().name(),
+                        tool.getToolDefinition().description(),
+                        tool.getToolDefinition().inputSchema()
                 ))
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * 调用工具
      * @param toolName 工具名称
@@ -75,15 +78,16 @@ public class McpServer {
         if (tool == null) {
             return "工具不存在: " + toolName;
         }
-        
+
         try {
-            return (String) tool.getFunction().apply(params);
+            String jsonParams = OBJECT_MAPPER.writeValueAsString(params);
+            return tool.call(jsonParams);
         } catch (Exception e) {
             log.error("工具调用失败: {}", toolName, e);
             return "工具调用失败: " + e.getMessage();
         }
     }
-    
+
     /**
      * MCP工具
      */

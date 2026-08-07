@@ -35,8 +35,8 @@ public class MqttMessageHandler implements MqttCallback {
     @Autowired
     private ServiceClient serviceClient;
     
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired(required = false)
+    private ObjectMapper objectMapper = new ObjectMapper();
     
     @Value("${mqtt.health.topic:jarvis/health/#}")
     private String healthTopic;

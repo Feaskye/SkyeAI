@@ -57,7 +57,7 @@ public class AliyunAIServiceImpl implements AliyunAIService {
     @Value("${llm.multimodal.aliyun.allmodel.enabled:true}")
     private boolean aliyunAllModelEnabled;
 
-    @Value("${llm.multimodal.aliyun.allmodel.api_key}")
+    @Value("${llm.multimodal.aliyun.allmodel.api_key:}")
     private String aliyunAllModelApiKey;
 
     @Value("${llm.multimodal.aliyun.allmodel.model:qwen-omni-turbo}")

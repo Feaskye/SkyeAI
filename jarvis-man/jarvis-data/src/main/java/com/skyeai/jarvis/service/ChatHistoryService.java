@@ -3,6 +3,8 @@ package com.skyeai.jarvis.service;
 import com.skyeai.jarvis.config.VectorService;
 import com.skyeai.jarvis.model.ChatHistory;
 import com.skyeai.jarvis.repository.ChatHistoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,21 +16,28 @@ import java.util.UUID;
 
 /**
  * 聊天历史服务，用于管理聊天上下文
+ *
+ * v10 改造说明：
+ * - 向量化存储通过 VectorService 委托 Spring AI VectorStore（Milvus），
+ *   与 java-jarvis 共用同一 Milvus 实例的 jarvis_chat_memory collection。
+ * - VectorService.addChatHistoryVector 内部调用 VectorStore.add（自动 embed），
+ *   无需再手动调用 TextEmbeddingService 生成向量。
+ * - 原计划的 gRPC 调用 java-jarvis SpringAiChatMemory.add() 方案已废弃，
+ *   因为 jarvis-data 直接访问共享 Milvus 更简单高效，避免双写和网络开销。
  */
 @Service
 public class ChatHistoryService {
 
+    private static final Logger log = LoggerFactory.getLogger(ChatHistoryService.class);
+
     private final ChatHistoryRepository chatHistoryRepository;
     private final VectorService vectorService;
-    private final TextEmbeddingService textEmbeddingService;
 
     @Autowired
-    public ChatHistoryService(ChatHistoryRepository chatHistoryRepository, 
-                             VectorService vectorService, 
-                             TextEmbeddingService textEmbeddingService) {
+    public ChatHistoryService(ChatHistoryRepository chatHistoryRepository,
+                             VectorService vectorService) {
         this.chatHistoryRepository = chatHistoryRepository;
         this.vectorService = vectorService;
-        this.textEmbeddingService = textEmbeddingService;
     }
 
     /**
@@ -40,37 +49,36 @@ public class ChatHistoryService {
         if (chatHistory.getCreatedAt() == null) {
             chatHistory.setCreatedAt(LocalDateTime.now());
         }
-        
+
         // 保存到数据库
         ChatHistory saved = chatHistoryRepository.save(chatHistory);
-        
-        // 保存到向量数据库
+
+        // 保存到向量数据库（VectorService 委托 Spring AI VectorStore）
         saveToVectorDatabase(saved);
-        
+
         return saved;
     }
 
     /**
      * 保存聊天历史到向量数据库
+     * v10 改造：委托 VectorService → Spring AI VectorStore.add（自动 embed）
+     * 与 java-jarvis 共用同一 Milvus 的 jarvis_chat_memory collection
      */
     private void saveToVectorDatabase(ChatHistory chatHistory) {
         try {
-            // 生成文本向量
-            List<Double> vector = textEmbeddingService.embedText(chatHistory.getContent());
-            
-            // 构建payload
+            // 构建payload（VectorService 内部 VectorStore.add 会自动 embed content）
             Map<String, Object> payload = new HashMap<>();
             payload.put("user_id", chatHistory.getUserId());
             payload.put("content", chatHistory.getContent());
             payload.put("role", chatHistory.getRole());
             payload.put("session_id", chatHistory.getSessionId());
             payload.put("created_at", chatHistory.getCreatedAt().toString());
-            
-            // 保存到向量数据库
-            vectorService.addChatHistoryVector(chatHistory.getId().toString(), vector, payload);
+
+            // 保存到向量数据库（VectorService 委托 Spring AI VectorStore）
+            vectorService.addChatHistoryVector(chatHistory.getId().toString(), null, payload);
         } catch (Exception e) {
             // 向量存储失败不影响主流程，只记录日志
-            System.err.println("Failed to save chat history to vector database: " + e.getMessage());
+            log.error("保存聊天历史到向量数据库失败 - chatHistoryId={}: {}", chatHistory.getId(), e.getMessage(), e);
         }
     }
 
